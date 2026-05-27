@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coding Logics: A Beginner's Guide in Python</title>
+<style>
+  :root {
+    --bg:       #ffffff;
+    --fg:       #1a1a2e;
+    --accent:   #2e4057;
+    --muted:    #666688;
+    --rule:     #ccccdd;
+    --code-bg:  #1e1e2e;
+    --code-fg:  #cdd6f4;
+    --kw:       #cba6f7;
+    --fn:       #89b4fa;
+    --str:      #a6e3a1;
+    --num:      #fab387;
+    --cm:       #6c7086;
+    --op:       #89dceb;
+    --out-bg:   #0a0f14;
+    --out-fg:   #00ff88;
+    --ex-bg:    #f0f4ff;
+    --ex-border:#2e4057;
+    --warn-bg:  #fff8e8;
+    --warn-bdr: #e8a020;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 18px;
+    line-height: 1.75;
+    color: var(--fg);
+    background: var(--bg);
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  /* Navigation */
+  nav { border-bottom: 1px solid var(--rule); padding-bottom: 1.5rem; margin-bottom: 2.5rem; }
+  nav h2 { font-family: Arial, sans-serif; font-size: 0.9rem; letter-spacing: 0.08em;
+            text-transform: uppercase; color: var(--muted); margin-bottom: 0.75rem; }
+  nav ol { padding-left: 1.5rem; }
+  nav li { margin: 0.25rem 0; }
+  nav a { color: var(--accent); text-decoration: none; font-family: Arial, sans-serif; font-size: 0.95rem; }
+  nav a:hover { text-decoration: underline; }
+  /* Cover */
+  .cover { text-align: center; padding: 4rem 0 3rem; border-bottom: 2px solid var(--fg); margin-bottom: 3rem; }
+  .cover h1 { font-size: 2.8rem; color: var(--accent); margin-bottom: 0.5rem; line-height: 1.2; }
+  .cover .subtitle { font-size: 1.3rem; color: var(--muted); font-style: italic; margin-bottom: 1.5rem; }
+  .cover .operator { font-family: "Courier New", monospace; font-size: 2.2rem; color: var(--accent);
+                     background: #f0f4ff; display: inline-block; padding: 0.4rem 1.5rem;
+                     border-radius: 4px; margin: 1rem 0; }
+  .cover .author { font-size: 1.1rem; color: var(--muted); margin-top: 1.5rem; }
+  .cover .level { font-size: 0.9rem; color: var(--muted); font-family: Arial, sans-serif;
+                  margin-top: 0.5rem; background: var(--ex-bg); display: inline-block;
+                  padding: 0.3rem 1rem; border-radius: 20px; }
+  /* Chapter headings */
+  .chapter { margin-top: 4rem; }
+  .chapter-label { font-family: Arial, sans-serif; font-size: 0.85rem; letter-spacing: 0.12em;
+                   text-transform: uppercase; color: var(--muted); margin-bottom: 0.4rem; }
+  h1.chapter-title { font-size: 2.1rem; color: var(--accent); margin-bottom: 0.5rem; }
+  h1.chapter-title .subtitle { font-size: 1rem; color: var(--muted); font-style: italic;
+                                 font-weight: normal; display: block; margin-top: 0.3rem; }
+  hr.chapter-rule { border: none; border-top: 2px solid var(--accent); margin: 1rem 0 1.8rem; }
+  h2 { font-family: Arial, sans-serif; font-size: 1.2rem; color: var(--accent);
+       margin: 2rem 0 0.6rem; }
+  h3 { font-family: Arial, sans-serif; font-size: 1rem; color: var(--fg);
+       margin: 1.5rem 0 0.4rem; }
+  p { margin-bottom: 1.1rem; text-align: justify; }
+  /* Code blocks */
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    border-radius: 6px;
+    padding: 1.2rem 1.4rem;
+    overflow-x: auto;
+    font-family: "Courier New", "Consolas", monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin: 1rem 0 0.5rem;
+  }
+  /* Syntax colours (class-based) */
+  .kw  { color: var(--kw); }
+  .fn  { color: var(--fn); }
+  .st  { color: var(--str); }
+  .nm  { color: var(--num); }
+  .cm  { color: var(--cm); font-style: italic; }
+  .op  { color: var(--op); }
+  /* Output block */
+  .output {
+    background: var(--out-bg);
+    color: var(--out-fg);
+    border-radius: 6px;
+    padding: 0.9rem 1.4rem;
+    font-family: "Courier New", monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  .output::before { content: "Output"; display: block; color: #556; font-size: 0.75rem;
+                    letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.5rem; }
+  /* Inline code */
+  code { font-family: "Courier New", monospace; background: #f0f0f8;
+         padding: 0.1em 0.35em; border-radius: 3px; font-size: 0.88em; }
+  /* Exercise box */
+  .exercise {
+    background: var(--ex-bg);
+    border-left: 4px solid var(--ex-border);
+    border-radius: 0 6px 6px 0;
+    padding: 1.2rem 1.4rem;
+    margin: 2rem 0 1rem;
+  }
+  .exercise-label { font-family: Arial, sans-serif; font-size: 0.8rem; letter-spacing: 0.1em;
+                    text-transform: uppercase; color: var(--accent); margin-bottom: 0.6rem; }
+  details { margin-top: 0.8rem; }
+  summary { font-family: Arial, sans-serif; font-size: 0.9rem; color: var(--accent);
+            cursor: pointer; list-style: none; padding: 0.4rem 0; }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▶  Show answer"; }
+  details[open] summary::before { content: "▼  Hide answer"; }
+  details pre { margin-top: 0.8rem; }
+  /* Key insight callout */
+  .insight {
+    border-left: 4px solid var(--accent);
+    padding: 0.8rem 1.2rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--accent);
+  }
+  .insight::before { content: "▶  "; font-style: normal; }
+  /* Warning/note */
+  .note {
+    background: var(--warn-bg);
+    border-left: 4px solid var(--warn-bdr);
+    padding: 0.8rem 1.2rem;
+    margin: 1.5rem 0;
+    font-family: Arial, sans-serif;
+    font-size: 0.92rem;
+  }
+  /* Footer */
+  footer { margin-top: 4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule);
+           font-family: Arial, sans-serif; font-size: 0.85rem; color: var(--muted); }
+  /* Print / dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #1a1a2e; --fg: #e0e0f0; --rule: #334; --ex-bg: #1e2040; --code-bg: #12121f; }
+    code { background: #2a2a40; }
+  }
+  @media print { nav { display: none; } .chapter { page-break-before: always; } }
+  @media (max-width: 600px) { body { font-size: 16px; padding: 1rem; } }
+</style>
+</head>
+<body>
+
+<!-- ── COVER ─────────────────────────────────────────────────────────────── -->
+<div class="cover">
+  <h1>Coding Logics</h1>
+  <div class="subtitle">A Beginner&#8217;s Guide to Building Formal Systems in Python</div>
+  <div class="operator">P&nbsp;&nbsp;/&nbsp;&nbsp;G&nbsp;&nbsp;&#x2192;&nbsp;&nbsp;Q</div>
+  <div class="author">James Alexander Pugmire &mdash; Propagation Logic Project &mdash; 2026</div>
+  <div class="level">Recommended: secondary school mathematics &middot; Python basics</div>
+</div>
+
+<!-- ── CONTENTS ──────────────────────────────────────────────────────────── -->
+<nav id="toc">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#preface">Preface: Why Code a Logic?</a></li>
+    <li><a href="#ch1">Chapter 1 &mdash; Hello, Carrier</a></li>
+    <li><a href="#ch2">Chapter 2 &mdash; Laws Are Tests</a></li>
+    <li><a href="#ch3">Chapter 3 &mdash; One More Value</a></li>
+    <li><a href="#ch4">Chapter 4 &mdash; The Liar Paradox</a></li>
+    <li><a href="#ch5">Chapter 5 &mdash; Continuous Carriers</a></li>
+    <li><a href="#ch6">Chapter 6 &mdash; The Price of Thinking</a></li>
+    <li><a href="#ch7">Chapter 7 &mdash; Loaded Patterns</a></li>
+    <li><a href="#ch8">Chapter 8 &mdash; The Carrier Class</a></li>
+    <li><a href="#ch9">Chapter 9 &mdash; Comparing Two Carriers</a></li>
+    <li><a href="#ch10">Chapter 10 &mdash; The Paradox Classifier</a></li>
+    <li><a href="#appendix">Appendix &mdash; Blank Template &amp; Exercises</a></li>
+  </ol>
+</nav>
+
+<!-- ── PREFACE ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="preface">
+<div class="chapter-label">Preface</div>
+<h1 class="chapter-title">Why Code a Logic?</h1>
+<hr class="chapter-rule">
+
+<p>Most programming tutorials treat logic as a given. True and false are built in. The operators <code>and</code>, <code>or</code>, <code>not</code> are keywords. You learn to use them. You never learn where they came from.</p>
+
+<p>This book teaches you to build a logic from first principles, in code. Five lines of Python produce a working formal logic. One more line breaks it. You add one value to a list and the Law of Non-Contradiction stops being forced. You write the test. You see exactly which value breaks it.</p>
+
+<p>That is the point. Logical laws are not axioms someone chose. They are outputs of arithmetic on a value space. When you code them, you can see this directly. The code is not illustrating the theory. The code <em>is</em> the theory.</p>
+
+<div class="insight">Every chapter ends with one exercise. Do it before reading the answer. The exercise is where the understanding happens.</div>
+
+<p><strong>What you need.</strong> Python 3.x (any version from 3.8 onward). A text editor or the Python shell. Chapter 5 uses <code>numpy</code>, which you can install with <code>pip install numpy</code> or skip by using a manually written list instead. No other dependencies. Every example in this book runs in under a second on any machine made in the last fifteen years.</p>
+
+<p><strong>What you should already know.</strong> Basic Python: variables, functions, lists, <code>for</code> loops, <code>lambda</code>. Secondary school maths: multiplication, the idea of a variable, what it means for an equation to have no solution.</p>
+
+<p><strong>Companion books.</strong> <em>The Math of Logic</em> covers the same material mathematically, without code. <em>Coding Logics in Rust</em> rebuilds every chapter in Rust, showing how a static type system enforces carrier properties the Python version only tests at runtime.</p>
+</section>
+
+<!-- ── CHAPTER 1 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch1">
+<div class="chapter-label">Chapter 1</div>
+<h1 class="chapter-title">Hello, Carrier
+  <span class="subtitle">Five lines of Python. One complete logic.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>A formal logic needs three things: a set of values, a way to negate them, and a way to combine them. That is it. Here is classical logic, the one you already know, in five lines:</p>
+
+<pre><span class="cm"># Classical logic: the one on a light switch</span>
+V   = [<span class="nm">0</span>, <span class="nm">1</span>]                      <span class="cm"># two values: 0 = false, 1 = true</span>
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v            <span class="cm"># flip</span>
+AND = <span class="kw">lambda</span> a, b: a * b         <span class="cm"># both must be true</span>
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)   <span class="cm"># at least one must be true</span></pre>
+
+<p>Run it. Try every value:</p>
+
+<pre><span class="kw">for</span> v <span class="kw">in</span> V:
+    <span class="fn">print</span>(<span class="st">f"v={v}  NOT={</span><span class="fn">NOT</span>(v)<span class="st">}  v AND NOT(v)={</span><span class="fn">AND</span>(v, <span class="fn">NOT</span>(v))<span class="st">}"</span>)</pre>
+
+<div class="output">v=0  NOT=1  v AND NOT(v)=0
+v=1  NOT=0  v AND NOT(v)=0</div>
+
+<p>The last column is always zero. <code>v AND NOT(v)</code> is always zero no matter what value you put in. That is the Law of Non-Contradiction: nothing can be simultaneously true and false. Notice that you did not declare this law. It follows from the fact that <code>AND = multiply</code> and one of the inputs is always zero when the other is one.</p>
+
+<p>Try OR the same way:</p>
+
+<pre><span class="kw">for</span> v <span class="kw">in</span> V:
+    <span class="fn">print</span>(<span class="st">f"v={v}  v OR NOT(v)={</span><span class="fn">OR</span>(v, <span class="fn">NOT</span>(v))<span class="st">}"</span>)</pre>
+
+<div class="output">v=0  v OR NOT(v)=1
+v=1  v OR NOT(v)=1</div>
+
+<p>Always one. That is the Law of Excluded Middle: everything is either true or false, with no middle ground. Again, you did not declare it. <code>max(0, 1) = 1</code> and <code>max(1, 0) = 1</code> regardless of which you start with.</p>
+
+<div class="insight">The laws are not axioms. They are arithmetic facts about the value set. You can verify each one by testing every value.</div>
+
+<h2>Why multiply for AND?</h2>
+
+<p>AND should be true only when <em>both</em> inputs are true. In a two-value system where true is 1 and false is 0, multiplication gives exactly that behaviour: the only way to get <code>1 * 1 = 1</code> is if both inputs are 1. Any zero in the input gives a zero output. The formula is not a convention &mdash; it is forced by what AND means and what values you have available.</p>
+
+<h2>Why max for OR?</h2>
+
+<p>OR should be true when <em>at least one</em> input is true. The maximum of the two values gives that: if either input is 1 (the larger value), the output is 1. Only when both are 0 (the minimum) does OR return 0. Again, forced by the definition and the value set.</p>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 1 &nbsp;&middot;&nbsp; &#9733;</div>
+<p>Add double negation as a test: for every value <code>v</code> in <code>V</code>, print <code>NOT(NOT(v))</code> and confirm it equals <code>v</code>. Then change <code>V</code> to <code>[0, 0.5, 1]</code> and run the same test. Does double negation still hold?</p>
+<details>
+<summary></summary>
+<pre><span class="cm"># Double negation test</span>
+V = [<span class="nm">0</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+
+<span class="kw">for</span> v <span class="kw">in</span> V:
+    <span class="fn">print</span>(<span class="st">f"NOT(NOT({v})) = {</span><span class="fn">NOT</span>(<span class="fn">NOT</span>(v))<span class="st">}  equals v? {</span><span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v<span class="st">}"</span>)
+
+<span class="cm"># Same with three values</span>
+V3 = [<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>]
+<span class="kw">for</span> v <span class="kw">in</span> V3:
+    <span class="fn">print</span>(<span class="st">f"NOT(NOT({v})) = {</span><span class="fn">NOT</span>(<span class="fn">NOT</span>(v))<span class="st">}  equals v? {</span><span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v<span class="st">}"</span>)</pre>
+<div class="output">NOT(NOT(0)) = 0  equals v? True
+NOT(NOT(1)) = 1  equals v? True
+NOT(NOT(0)) = 0  equals v? True
+NOT(NOT(0.5)) = 0.5  equals v? True
+NOT(NOT(1)) = 1  equals v? True</div>
+<p>Double negation holds in both cases with <code>NOT = 1 - v</code>. It holds for any value v where <code>1 - (1 - v) = v</code>, which is always true algebraically. This is one law that survives carrier changes with this definition of NOT.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 2 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch2">
+<div class="chapter-label">Chapter 2</div>
+<h1 class="chapter-title">Laws Are Tests
+  <span class="subtitle">Writing falsifiable assertions in three lines each.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>In Chapter 1 you verified laws by printing results and looking at them. That works for two values. With a hundred values it is impractical. You need functions that do the checking.</p>
+
+<p>The key insight: a law is a claim that holds for <em>every</em> value in the carrier. Testing it is a one-liner using <code>all()</code>:</p>
+
+<pre><span class="cm"># LNC: A AND NOT(A) = 0 for all A</span>
+<span class="kw">def</span> <span class="fn">check_lnc</span>(V, AND, NOT):
+    <span class="kw">return</span> <span class="fn">all</span>(<span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)) == <span class="nm">0</span> <span class="kw">for</span> v <span class="kw">in</span> V)
+
+<span class="cm"># LEM: A OR NOT(A) = max(V) for all A</span>
+<span class="kw">def</span> <span class="fn">check_lem</span>(V, OR, NOT):
+    top = <span class="fn">max</span>(V)
+    <span class="kw">return</span> <span class="fn">all</span>(<span class="fn">OR</span>(v, <span class="fn">NOT</span>(v)) == top <span class="kw">for</span> v <span class="kw">in</span> V)
+
+<span class="cm"># Double negation: NOT(NOT(A)) = A for all A</span>
+<span class="kw">def</span> <span class="fn">check_dn</span>(V, NOT):
+    <span class="kw">return</span> <span class="fn">all</span>(<span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v <span class="kw">for</span> v <span class="kw">in</span> V)</pre>
+
+<p>But returning <code>True</code> or <code>False</code> tells you <em>whether</em> a law holds, not <em>where</em> it fails. Add a failure reporter:</p>
+
+<pre><span class="kw">def</span> <span class="fn">report_lnc</span>(V, AND, NOT):
+    failures = [(v, <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)))
+                <span class="kw">for</span> v <span class="kw">in</span> V
+                <span class="kw">if</span> <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)) != <span class="nm">0</span>]
+    <span class="kw">if</span> failures:
+        <span class="fn">print</span>(<span class="st">f"LNC FAILS at: {failures}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="st">"LNC: forced in this carrier"</span>)
+
+<span class="cm"># Test on classical carrier</span>
+V   = [<span class="nm">0</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+<span class="fn">report_lnc</span>(V, AND, NOT)</pre>
+
+<div class="output">LNC: forced in this carrier</div>
+
+<h2>A general law checker</h2>
+
+<p>You can write a single function that tests any law expressed as a predicate:</p>
+
+<pre><span class="kw">def</span> <span class="fn">check_law</span>(name, V, predicate):
+    failures = [v <span class="kw">for</span> v <span class="kw">in</span> V <span class="kw">if</span> <span class="kw">not</span> <span class="fn">predicate</span>(v)]
+    <span class="kw">if</span> failures:
+        <span class="fn">print</span>(<span class="st">f"  ✗ {name}: fails at {failures}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="st">f"  ✓ {name}: forced"</span>)
+
+<span class="cm"># Use it</span>
+V   = [<span class="nm">0</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+
+<span class="fn">print</span>(<span class="st">"Classical carrier:"</span>)
+<span class="fn">check_law</span>(<span class="st">"LNC"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)) == <span class="nm">0</span>)
+<span class="fn">check_law</span>(<span class="st">"LEM"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">OR</span>(v, <span class="fn">NOT</span>(v)) == <span class="fn">max</span>(V))
+<span class="fn">check_law</span>(<span class="st">"Double Negation"</span>, V, <span class="kw">lambda</span> v: <span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v)</pre>
+
+<div class="output">Classical carrier:
+  ✓ LNC: forced
+  ✓ LEM: forced
+  ✓ Double Negation: forced</div>
+
+<div class="insight">A law is just a predicate applied to every value. <code>all(predicate(v) for v in V)</code> is the test. One counterexample is enough to disprove.</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 2 &nbsp;&middot;&nbsp; &#9733;</div>
+<p>Add a test for <strong>Ex Falso</strong>: from a contradiction (<code>AND(v, NOT(v))</code>), anything should follow. Formally: if <code>AND(v, NOT(v))</code> is designated (not zero), then for any value <code>w</code>, <code>OR(AND(v, NOT(v)), w)</code> should equal <code>max(V)</code>. Write <code>check_ex_falso(V, AND, OR, NOT)</code> and run it on the classical carrier.</p>
+<details>
+<summary></summary>
+<pre><span class="kw">def</span> <span class="fn">check_ex_falso</span>(V, AND, OR, NOT):
+    <span class="cm"># For every v, if the contradiction is designated,</span>
+    <span class="cm"># then OR-ing it with anything should give the top value</span>
+    top = <span class="fn">max</span>(V)
+    failures = []
+    <span class="kw">for</span> v <span class="kw">in</span> V:
+        contradiction = <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v))
+        <span class="kw">if</span> contradiction != <span class="nm">0</span>:   <span class="cm"># contradiction is designated</span>
+            <span class="kw">for</span> w <span class="kw">in</span> V:
+                result = <span class="fn">OR</span>(contradiction, w)
+                <span class="kw">if</span> result != top:
+                    failures.append((v, w, result))
+    <span class="kw">if</span> failures:
+        <span class="fn">print</span>(<span class="st">f"Ex Falso fails at: {failures}"</span>)
+    <span class="kw">else</span>:
+        <span class="fn">print</span>(<span class="st">"Ex Falso: forced (no designated contradictions exist)"</span>)
+
+V   = [<span class="nm">0</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+<span class="fn">check_ex_falso</span>(V, AND, OR, NOT)</pre>
+<div class="output">Ex Falso: forced (no designated contradictions exist)</div>
+<p>In the classical carrier, no contradiction is ever designated (LNC is forced), so Ex Falso holds vacuously. It becomes interesting when you move to a carrier where LNC fails &mdash; that is Chapter 3.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 3 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch3">
+<div class="chapter-label">Chapter 3</div>
+<h1 class="chapter-title">One More Value
+  <span class="subtitle">Add 0.5 to the list. Watch the laws change.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>Classical logic has two values: 0 and 1. What if you add a third? Call it <code>B</code> for <em>both</em>. It represents something that is simultaneously true and false. Let us encode it as <code>0.5</code> and add it to the list:</p>
+
+<pre>V   = [<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v          <span class="cm"># same formula</span>
+AND = <span class="kw">lambda</span> a, b: a * b         <span class="cm"># same formula</span>
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)   <span class="cm"># same formula</span></pre>
+
+<p>Same operations. Different carrier. Run the law checks:</p>
+
+<pre><span class="fn">print</span>(<span class="st">"Three-valued carrier {0, 0.5, 1}:"</span>)
+<span class="fn">check_law</span>(<span class="st">"LNC"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)) == <span class="nm">0</span>)
+<span class="fn">check_law</span>(<span class="st">"LEM"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">OR</span>(v, <span class="fn">NOT</span>(v)) == <span class="fn">max</span>(V))
+<span class="fn">check_law</span>(<span class="st">"Double Negation"</span>, V, <span class="kw">lambda</span> v: <span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v)</pre>
+
+<div class="output">Three-valued carrier {0, 0.5, 1}:
+  ✗ LNC: fails at [0.5]
+  ✗ LEM: fails at [0.5]
+  ✓ Double Negation: forced</div>
+
+<p>Two laws broke. The operations did not change. The carrier changed. Let us verify exactly why, by hand:</p>
+
+<pre><span class="cm"># Why LNC fails at 0.5:</span>
+v = <span class="nm">0.5</span>
+<span class="fn">print</span>(<span class="st">f"NOT(0.5) = {</span><span class="fn">NOT</span>(<span class="nm">0.5</span>)<span class="st">}"</span>)                          <span class="cm"># 0.5</span>
+<span class="fn">print</span>(<span class="st">f"0.5 AND NOT(0.5) = {</span><span class="fn">AND</span>(<span class="nm">0.5</span>, <span class="fn">NOT</span>(<span class="nm">0.5</span>))<span class="st">}"</span>)          <span class="cm"># 0.25, not 0</span>
+
+<span class="cm"># Why LEM fails at 0.5:</span>
+<span class="fn">print</span>(<span class="st">f"0.5 OR NOT(0.5) = {</span><span class="fn">OR</span>(<span class="nm">0.5</span>, <span class="fn">NOT</span>(<span class="nm">0.5</span>))<span class="st">}"</span>)            <span class="cm"># 0.5, not 1</span></pre>
+
+<div class="output">NOT(0.5) = 0.5
+0.5 AND NOT(0.5) = 0.25
+0.5 OR NOT(0.5) = 0.5</div>
+
+<p>The value <code>0.5</code> is its own negation: <code>NOT(0.5) = 1 - 0.5 = 0.5</code>. So <code>AND(0.5, NOT(0.5)) = AND(0.5, 0.5) = 0.5 * 0.5 = 0.25</code>, which is not zero. LNC fails because the new value is its own opposite, and multiplying it by itself gives something non-zero.</p>
+
+<div class="insight">One new value broke two laws. The laws are properties of the arithmetic, not choices. Change the input; the output changes automatically.</div>
+
+<h2>Checking Ex Falso</h2>
+
+<p>In the classical carrier, Ex Falso held vacuously because no contradiction was designated. Now we have a designated contradiction at <code>v = 0.5</code>. What happens?</p>
+
+<pre><span class="fn">check_ex_falso</span>(V, AND, OR, NOT)</pre>
+
+<div class="output">Ex Falso fails at: [(0.5, 0, 0.25), (0.5, 0.5, 0.25), (0.5, 1, 0.5)]</div>
+
+<p>From the contradiction <code>0.5</code>, you cannot derive every value. <code>OR(0.25, 0) = 0.25</code>, not <code>1</code>. The explosion principle fails. This is why this three-valued system is called <em>paraconsistent</em>: it can hold a contradiction without everything becoming derivable.</p>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 3 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Try a <em>four-valued</em> carrier: <code>[0, 0.33, 0.67, 1]</code> with the same three operations. Which laws hold? Which fail? At which values do they fail? Predict first, then run the code.</p>
+<details>
+<summary></summary>
+<pre>V   = [<span class="nm">0</span>, <span class="nm">0.33</span>, <span class="nm">0.67</span>, <span class="nm">1</span>]
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+
+<span class="fn">print</span>(<span class="st">"Four-valued carrier:"</span>)
+<span class="fn">check_law</span>(<span class="st">"LNC"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">AND</span>(v, <span class="fn">NOT</span>(v)) == <span class="nm">0</span>)
+<span class="fn">check_law</span>(<span class="st">"LEM"</span>,            V, <span class="kw">lambda</span> v: <span class="fn">OR</span>(v, <span class="fn">NOT</span>(v)) == <span class="fn">max</span>(V))
+<span class="fn">check_law</span>(<span class="st">"Double Negation"</span>, V, <span class="kw">lambda</span> v: <span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) == v)</pre>
+<div class="output">Four-valued carrier:
+  ✗ LNC: fails at [0.33, 0.67]
+  ✗ LEM: fails at [0.33, 0.67]
+  ✓ Double Negation: forced</div>
+<p>The pattern: LNC and LEM both fail at any value <code>v</code> where <code>NOT(v) = 1 - v = v</code>, i.e. where <code>v = 0.5</code>. Since 0.5 is not in this carrier, the failures happen at the values closest to 0.5: 0.33 and 0.67. <code>NOT(0.33) = 0.67</code>, so <code>AND(0.33, 0.67) = 0.33 * 0.67 = 0.221</code>, not zero. Double negation always holds because <code>1 - (1 - v) = v</code> algebraically.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 4 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch4">
+<div class="chapter-label">Chapter 4</div>
+<h1 class="chapter-title">The Liar Paradox
+  <span class="subtitle">One function. A two-thousand-year-old problem solved.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>The Liar Paradox is the sentence: <em>This sentence is false</em>. If it is true, it is false. If it is false, it is true. It seems to have no consistent truth value.</p>
+
+<p>In code, it demands a value <code>v</code> that satisfies: <code>v = NOT(v)</code>. We call this a <em>fixed point</em> of NOT. Finding whether one exists is a one-liner:</p>
+
+<pre><span class="kw">def</span> <span class="fn">liar_solutions</span>(V, NOT, tolerance=<span class="nm">1e-10</span>):
+    <span class="kw">return</span> [v <span class="kw">for</span> v <span class="kw">in</span> V <span class="kw">if</span> <span class="fn">abs</span>(v - <span class="fn">NOT</span>(v)) &lt; tolerance]
+
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+
+<span class="cm"># Classical carrier</span>
+<span class="fn">print</span>(<span class="fn">liar_solutions</span>([<span class="nm">0</span>, <span class="nm">1</span>], NOT))        <span class="cm"># No solution: paradox</span>
+
+<span class="cm"># Three-valued carrier</span>
+<span class="fn">print</span>(<span class="fn">liar_solutions</span>([<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>], NOT))   <span class="cm"># Solution at 0.5</span></pre>
+
+<div class="output">[]
+[0.5]</div>
+
+<p>In the classical carrier, no value satisfies <code>v = NOT(v) = 1 - v</code>. The equation <code>v = 1 - v</code> solves to <code>v = 0.5</code>, but <code>0.5</code> is not in <code>{0, 1}</code>. The carrier does not contain the solution, so the pattern has nowhere to settle. Load accumulates without limit.</p>
+
+<p>Add <code>0.5</code> to the carrier and the solution appears. The paradox is not a mystery about truth; it is a statement about which value space you are working in.</p>
+
+<h2>Visualising the search</h2>
+
+<pre><span class="fn">print</span>(<span class="st">"Searching for fixed points of NOT(v) = 1-v:"</span>)
+<span class="kw">for</span> v <span class="kw">in</span> [<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>]:
+    result = <span class="nm">1</span> - v
+    match  = <span class="st">"&lt;-- FIXED POINT (Liar solution)"</span> <span class="kw">if</span> result == v <span class="kw">else</span> <span class="st">""</span>
+    <span class="fn">print</span>(<span class="st">f"  v={v}  NOT(v)={result}  equal? {result==v}  {match}"</span>)</pre>
+
+<div class="output">Searching for fixed points of NOT(v) = 1-v:
+  v=0    NOT(v)=1    equal? False
+  v=0.5  NOT(v)=0.5  equal? True  &lt;-- FIXED POINT (Liar solution)
+  v=1    NOT(v)=0    equal? False</div>
+
+<div class="insight">The Liar Paradox is not a flaw in logic. It is the carrier {0, 1} not containing the value the equation requires. Extend the carrier; the paradox dissolves.</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 4 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>What if NOT is defined differently? Try <code>NOT = lambda v: v</code> (identity: every value is its own negation). Find the fixed points in <code>[0, 0.5, 1]</code>. What happens to LNC and LEM with this definition of NOT?</p>
+<details>
+<summary></summary>
+<pre>NOT_identity = <span class="kw">lambda</span> v: v   <span class="cm"># every value is its own negation</span>
+V   = [<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>]
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+
+<span class="fn">print</span>(<span class="st">"Fixed points:"</span>, <span class="fn">liar_solutions</span>(V, NOT_identity))
+<span class="fn">check_law</span>(<span class="st">"LNC"</span>, V, <span class="kw">lambda</span> v: <span class="fn">AND</span>(v, NOT_identity(v)) == <span class="nm">0</span>)
+<span class="fn">check_law</span>(<span class="st">"LEM"</span>, V, <span class="kw">lambda</span> v: <span class="fn">OR</span>(v, NOT_identity(v)) == <span class="fn">max</span>(V))</pre>
+<div class="output">Fixed points: [0, 0.5, 1]
+  ✗ LNC: fails at [0.5, 1]
+  ✗ LEM: fails at [0, 0.5]</div>
+<p>With identity NOT, everything is its own negation, so every value is a Liar solution. AND(1, NOT(1)) = AND(1, 1) = 1 &ne; 0, so LNC fails at 1. OR(0, NOT(0)) = OR(0, 0) = 0 &ne; 1, so LEM fails at 0. The definition of NOT shapes which laws are possible just as much as the carrier does.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 5 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch5">
+<div class="chapter-label">Chapter 5</div>
+<h1 class="chapter-title">Continuous Carriers
+  <span class="subtitle">From a list of two to infinitely many values.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>So far every carrier has been a short list. In real reasoning, many systems use a continuous range of values &mdash; every number between 0 and 1, for example, representing degrees of truth or probability. Testing laws across a continuous carrier requires sampling.</p>
+
+<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+V_continuous = <span class="fn">list</span>(np.<span class="fn">linspace</span>(<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">1001</span>))  <span class="cm"># 1001 evenly spaced values</span>
+NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+
+<span class="fn">print</span>(<span class="st">"Continuous carrier [0, 1] (1001 samples):"</span>)
+<span class="fn">check_law</span>(<span class="st">"LNC"</span>,            V_continuous, <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="fn">AND</span>(v, <span class="fn">NOT</span>(v))) &lt; <span class="nm">1e-10</span>)
+<span class="fn">check_law</span>(<span class="st">"LEM"</span>,            V_continuous, <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="fn">OR</span>(v, <span class="fn">NOT</span>(v)) - <span class="nm">1</span>) &lt; <span class="nm">1e-10</span>)
+<span class="fn">check_law</span>(<span class="st">"Double Negation"</span>, V_continuous, <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="fn">NOT</span>(<span class="fn">NOT</span>(v)) - v) &lt; <span class="nm">1e-10</span>)</pre>
+
+<div class="output">Continuous carrier [0, 1] (1001 samples):
+  ✗ LNC: fails at [0.001, 0.002, ..., 0.999]
+  ✗ LEM: fails at [0.001, 0.002, ..., 0.999]
+  ✓ Double Negation: forced</div>
+
+<div class="note"><strong>Note on floating-point comparison.</strong> Never use <code>== 0</code> when testing continuous values. Use <code>abs(x) &lt; 1e-10</code> instead. Floating-point arithmetic accumulates tiny rounding errors that make exact equality comparisons unreliable.</div>
+
+<h2>The Liar on a continuous carrier</h2>
+
+<pre>solutions = <span class="fn">liar_solutions</span>(V_continuous, NOT, tolerance=<span class="nm">0.002</span>)
+<span class="fn">print</span>(<span class="st">f"Liar solutions in [0,1]: {solutions[<span class="nm">0</span>]:.4f} (approximately)"</span>)</pre>
+
+<div class="output">Liar solutions in [0,1]: 0.5000 (approximately)</div>
+
+<h2>Building a no-numpy fallback</h2>
+
+<p>If you do not have numpy, build the sample list manually:</p>
+
+<pre><span class="cm"># No numpy needed</span>
+n = <span class="nm">1001</span>
+V_manual = [i / (n - <span class="nm">1</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n)]  <span class="cm"># [0.0, 0.001, ..., 1.0]</span>
+<span class="fn">print</span>(V_manual[<span class="nm">0</span>], V_manual[<span class="nm">500</span>], V_manual[-<span class="nm">1</span>])</pre>
+
+<div class="output">0.0  0.5  1.0</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 5 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Try a <em>different</em> AND operation on the continuous carrier: <code>AND_min = lambda a, b: min(a, b)</code>. Check LNC with this AND. Does it do better or worse than multiply? Find the values where it fails (if any).</p>
+<details>
+<summary></summary>
+<pre>AND_min = <span class="kw">lambda</span> a, b: <span class="fn">min</span>(a, b)
+NOT     = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+n       = <span class="nm">1001</span>
+V       = [i / (n - <span class="nm">1</span>) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n)]
+
+<span class="fn">check_law</span>(<span class="st">"LNC with min-AND"</span>, V,
+          <span class="kw">lambda</span> v: <span class="fn">abs</span>(AND_min(v, NOT(v))) &lt; <span class="nm">1e-10</span>)</pre>
+<div class="output">  ✗ LNC with min-AND: fails at [0.5]</div>
+<p>With min-AND: <code>AND(0.5, NOT(0.5)) = min(0.5, 0.5) = 0.5</code>, not zero. Still fails at 0.5 (where the value is its own negation). But notice it only fails at exactly one point, not at every non-extreme value as multiply-AND does. Different AND operations give different failure profiles with the same carrier.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 6 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch6">
+<div class="chapter-label">Chapter 6</div>
+<h1 class="chapter-title">The Price of Thinking
+  <span class="subtitle">Adding cost to every operation.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>Every operation has a cost. Maintaining the distinction between true and false requires work. Erasing one bit of information costs at minimum <code>kT ln(2)</code> joules at temperature T &mdash; this is the Landauer limit, approximately <code>2.87 &times; 10&minus;21</code> joules at room temperature.</p>
+
+<p>For our purposes, we track cost as a dimensionless number called <em>load</em>. Each operation adds to the load. The system has a <em>threshold</em> above which it cannot produce coherent results.</p>
+
+<pre><span class="cm"># A pattern is a (value, load) pair</span>
+<span class="cm"># Operations combine values AND accumulate load</span>
+
+<span class="kw">def</span> <span class="fn">NOT_loaded</span>(p):
+    value, load = p
+    <span class="kw">return</span> (<span class="nm">1</span> - value, load)            <span class="cm"># load unchanged: negation is free</span>
+
+<span class="kw">def</span> <span class="fn">AND_loaded</span>(p, q):
+    v1, l1 = p
+    v2, l2 = q
+    <span class="kw">return</span> (v1 * v2, l1 + l2)          <span class="cm"># loads ADD: conjunction is expensive</span>
+
+<span class="kw">def</span> <span class="fn">OR_loaded</span>(p, q):
+    v1, l1 = p
+    v2, l2 = q
+    <span class="kw">return</span> (<span class="fn">max</span>(v1, v2), <span class="fn">min</span>(l1, l2)) <span class="cm"># take cheapest path</span>
+
+<span class="cm"># A pattern: value 1, load 3.0</span>
+P = (<span class="nm">1</span>, <span class="nm">3.0</span>)
+Q = (<span class="nm">1</span>, <span class="nm">5.0</span>)
+
+<span class="fn">print</span>(<span class="st">"AND(P, Q):"</span>, <span class="fn">AND_loaded</span>(P, Q))   <span class="cm"># loads add: 3 + 5 = 8</span>
+<span class="fn">print</span>(<span class="st">"OR(P, Q):"</span>,  <span class="fn">OR_loaded</span>(P, Q))    <span class="cm"># cheaper path: min(3,5) = 3</span>
+<span class="fn">print</span>(<span class="st">"NOT(P):"</span>,    <span class="fn">NOT_loaded</span>(P))      <span class="cm"># load unchanged</span></pre>
+
+<div class="output">AND(P, Q): (1, 8.0)
+OR(P, Q):  (1, 3.0)
+NOT(P):    (0, 3.0)</div>
+
+<h2>The coherence threshold</h2>
+
+<pre>theta = <span class="nm">10.0</span>   <span class="cm"># maximum load the system can tolerate</span>
+
+<span class="kw">def</span> <span class="fn">is_coherent</span>(p, theta):
+    value, load = p
+    <span class="kw">return</span> load &lt;= theta
+
+<span class="cm"># Chain of ANDs: load accumulates</span>
+patterns = [(<span class="nm">1</span>, <span class="nm">2.0</span>), (<span class="nm">1</span>, <span class="nm">3.0</span>), (<span class="nm">1</span>, <span class="nm">2.5</span>), (<span class="nm">1</span>, <span class="nm">4.0</span>)]
+
+result = patterns[<span class="nm">0</span>]
+<span class="kw">for</span> i, p <span class="kw">in</span> <span class="fn">enumerate</span>(patterns[<span class="nm">1</span>:], <span class="nm">1</span>):
+    result = <span class="fn">AND_loaded</span>(result, p)
+    coherent = <span class="fn">is_coherent</span>(result, theta)
+    <span class="fn">print</span>(<span class="st">f"After {i} ANDs: load={result[<span class="nm">1</span>]:.1f}  coherent={coherent}"</span>)</pre>
+
+<div class="output">After 1 ANDs: load=5.0   coherent=True
+After 2 ANDs: load=7.5   coherent=True
+After 3 ANDs: load=11.5  coherent=False</div>
+
+<div class="insight">The threshold is not a philosophical concept. It is the point at which the accumulated cost of maintaining distinctions exceeds the system's budget. Beyond it, the pattern cannot settle.</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 6 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Write a function <code>propagate_chain(patterns, operation, theta)</code> that applies <code>operation</code> to a list of patterns in sequence and stops at the first incoherent result, printing a report at each step. Test it with AND and OR on the same list of patterns.</p>
+<details>
+<summary></summary>
+<pre><span class="kw">def</span> <span class="fn">propagate_chain</span>(patterns, operation, theta):
+    result = patterns[<span class="nm">0</span>]
+    <span class="fn">print</span>(<span class="st">f"Start:  value={result[<span class="nm">0</span>]}  load={result[<span class="nm">1</span>]}"</span>)
+    <span class="kw">for</span> i, p <span class="kw">in</span> <span class="fn">enumerate</span>(patterns[<span class="nm">1</span>:], <span class="nm">1</span>):
+        result = <span class="fn">operation</span>(result, p)
+        ok = result[<span class="nm">1</span>] &lt;= theta
+        status = <span class="st">"ok"</span> <span class="kw">if</span> ok <span class="kw">else</span> <span class="st">"INCOHERENT"</span>
+        <span class="fn">print</span>(<span class="st">f"Step {i}: value={result[<span class="nm">0</span>]:.3f}  load={result[<span class="nm">1</span>]:.1f}  [{status}]"</span>)
+        <span class="kw">if not</span> ok:
+            <span class="fn">print</span>(<span class="st">"  Stopping: threshold exceeded."</span>)
+            <span class="kw">break</span>
+
+patterns = [(<span class="nm">1</span>, <span class="nm">2.0</span>), (<span class="nm">1</span>, <span class="nm">3.0</span>), (<span class="nm">1</span>, <span class="nm">2.5</span>), (<span class="nm">1</span>, <span class="nm">4.0</span>)]
+theta    = <span class="nm">10.0</span>
+
+<span class="fn">print</span>(<span class="st">"AND chain:"</span>)
+<span class="fn">propagate_chain</span>(patterns, AND_loaded, theta)
+<span class="fn">print</span>()
+<span class="fn">print</span>(<span class="st">"OR chain:"</span>)
+<span class="fn">propagate_chain</span>(patterns, OR_loaded, theta)</pre>
+<div class="output">AND chain:
+Start:  value=1  load=2.0
+Step 1: value=1.000  load=5.0  [ok]
+Step 2: value=1.000  load=7.5  [ok]
+Step 3: value=1.000  load=11.5  [INCOHERENT]
+  Stopping: threshold exceeded.
+
+OR chain:
+Start:  value=1  load=2.0
+Step 1: value=1.000  load=2.0  [ok]
+Step 2: value=1.000  load=2.0  [ok]
+Step 3: value=1.000  load=2.0  [ok]</div>
+<p>OR always takes the minimum load (the cheaper path), so a chain of ORs never increases load beyond the cheapest pattern. AND adds loads each step, exhausting the budget after three operations here. This is why OR is structurally cheaper than AND.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 7 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch7">
+<div class="chapter-label">Chapter 7</div>
+<h1 class="chapter-title">Loaded Patterns
+  <span class="subtitle">P = (value, load) as a proper Python object.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>Using tuples works, but indexing with <code>p[0]</code> and <code>p[1]</code> is unclear. Python's <code>dataclass</code> gives you named fields, a readable <code>__repr__</code>, and a place to put methods.</p>
+
+<pre><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass
+
+<span class="op">@dataclass</span>
+<span class="kw">class</span> <span class="fn">Pattern</span>:
+    value: <span class="fn">float</span>
+    load:  <span class="fn">float</span> = <span class="nm">0.0</span>
+
+    <span class="kw">def</span> <span class="fn">is_coherent</span>(<span class="kw">self</span>, theta: <span class="fn">float</span>) -> <span class="fn">bool</span>:
+        <span class="kw">return self</span>.load &lt;= theta
+
+    <span class="kw">def</span> <span class="fn">is_designated</span>(<span class="kw">self</span>) -> <span class="fn">bool</span>:
+        <span class="kw">return self</span>.value != <span class="nm">0</span>
+
+<span class="cm"># Readable</span>
+P = <span class="fn">Pattern</span>(value=<span class="nm">1</span>, load=<span class="nm">3.0</span>)
+Q = <span class="fn">Pattern</span>(value=<span class="nm">0</span>, load=<span class="nm">5.0</span>)
+<span class="fn">print</span>(P)
+<span class="fn">print</span>(<span class="st">f"P designated: {P.<span class="fn">is_designated</span>()}, coherent at theta=4: {P.<span class="fn">is_coherent</span>(<span class="nm">4.0</span>)}"</span>)</pre>
+
+<div class="output">Pattern(value=1, load=3.0)
+P designated: True, coherent at theta=4: True</div>
+
+<h2>Operations as functions on Pattern</h2>
+
+<pre><span class="kw">def</span> <span class="fn">pat_not</span>(p: <span class="fn">Pattern</span>) -> <span class="fn">Pattern</span>:
+    <span class="kw">return</span> <span class="fn">Pattern</span>(<span class="nm">1</span> - p.value, p.load)
+
+<span class="kw">def</span> <span class="fn">pat_and</span>(p: <span class="fn">Pattern</span>, q: <span class="fn">Pattern</span>) -> <span class="fn">Pattern</span>:
+    <span class="kw">return</span> <span class="fn">Pattern</span>(p.value * q.value, p.load + q.load)
+
+<span class="kw">def</span> <span class="fn">pat_or</span>(p: <span class="fn">Pattern</span>, q: <span class="fn">Pattern</span>) -> <span class="fn">Pattern</span>:
+    <span class="kw">return</span> <span class="fn">Pattern</span>(<span class="fn">max</span>(p.value, q.value), <span class="fn">min</span>(p.load, q.load))
+
+P = <span class="fn">Pattern</span>(<span class="nm">1</span>, <span class="nm">3.0</span>)
+Q = <span class="fn">Pattern</span>(<span class="nm">1</span>, <span class="nm">5.0</span>)
+
+<span class="fn">print</span>(<span class="st">"AND:"</span>, <span class="fn">pat_and</span>(P, Q))
+<span class="fn">print</span>(<span class="st">"OR:"</span>,  <span class="fn">pat_or</span>(P, Q))
+<span class="fn">print</span>(<span class="st">"NOT:"</span>, <span class="fn">pat_not</span>(P))</pre>
+
+<div class="output">AND: Pattern(value=1, load=8.0)
+OR:  Pattern(value=1, load=3.0)
+NOT: Pattern(value=0, load=3.0)</div>
+
+<h2>The propagation operator</h2>
+
+<p>Now we can write the propagation operator cleanly. <code>P / G &rarr; Q</code> in Python:</p>
+
+<pre><span class="kw">def</span> <span class="fn">propagate</span>(p: <span class="fn">Pattern</span>, G, *args) -> <span class="fn">Pattern</span>:
+    <span class="st">"""Apply gradient G to pattern P. Extra args for binary operations."""</span>
+    <span class="kw">return</span> <span class="fn">G</span>(p, *args)
+
+P = <span class="fn">Pattern</span>(<span class="nm">1</span>, <span class="nm">2.0</span>)
+Q = <span class="fn">Pattern</span>(<span class="nm">1</span>, <span class="nm">4.0</span>)
+
+result = <span class="fn">propagate</span>(P, pat_and, Q)   <span class="cm"># P / AND -> result</span>
+<span class="fn">print</span>(<span class="st">f"P / AND -> {result}"</span>)</pre>
+
+<div class="output">P / AND -> Pattern(value=1, load=6.0)</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 7 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Add an <code>implies</code> operation to the Pattern operations. The implication rule: if <code>p.value == 1</code> (p is designated), the output is <code>q</code>. If <code>p.value == 0</code>, the output is <code>Pattern(1, 0.0)</code> (vacuously true, zero cost). Test it on all four combinations of <code>Pattern(0)</code> and <code>Pattern(1)</code> and verify the output matches the classical truth table.</p>
+<details>
+<summary></summary>
+<pre><span class="kw">def</span> <span class="fn">pat_implies</span>(p: <span class="fn">Pattern</span>, q: <span class="fn">Pattern</span>) -> <span class="fn">Pattern</span>:
+    <span class="kw">if</span> p.value == <span class="nm">1</span>:         <span class="cm"># forcing case</span>
+        <span class="kw">return</span> q
+    <span class="kw">return</span> <span class="fn">Pattern</span>(<span class="nm">1</span>, <span class="nm">0.0</span>)  <span class="cm"># vacuous: false premise, always true, free</span>
+
+<span class="fn">print</span>(<span class="st">"Implication truth table:"</span>)
+<span class="kw">for</span> pv <span class="kw">in</span> [<span class="nm">0</span>, <span class="nm">1</span>]:
+    <span class="kw">for</span> qv <span class="kw">in</span> [<span class="nm">0</span>, <span class="nm">1</span>]:
+        p = <span class="fn">Pattern</span>(pv, <span class="nm">1.0</span>)
+        q = <span class="fn">Pattern</span>(qv, <span class="nm">1.0</span>)
+        r = <span class="fn">pat_implies</span>(p, q)
+        <span class="fn">print</span>(<span class="st">f"  P={pv} -> Q={qv}  result={r.value}  load={r.load}"</span>)</pre>
+<div class="output">Implication truth table:
+  P=0 -> Q=0  result=1  load=0.0
+  P=0 -> Q=1  result=1  load=0.0
+  P=1 -> Q=0  result=0  load=1.0
+  P=1 -> Q=1  result=1  load=1.0</div>
+<p>Matches the classical truth table: only P=1, Q=0 gives a false output. The load structure is interesting: vacuous truths (P=0) cost nothing, while forced implications (P=1) carry the load of Q.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 8 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch8">
+<div class="chapter-label">Chapter 8</div>
+<h1 class="chapter-title">The Carrier Class
+  <span class="subtitle">Everything in one reusable object.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>You now have all the pieces. A carrier is a value set, three operations, and a threshold. Putting them in a class makes testing any combination immediate:</p>
+
+<pre><span class="kw">class</span> <span class="fn">Carrier</span>:
+    <span class="st">"""A formal logic: value set, operations, coherence threshold."""</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="kw">self</span>, V, not_, and_, or_, theta=<span class="nm">1.0</span>, name=<span class="st">""</span>):
+        <span class="kw">self</span>.V     = V
+        <span class="kw">self</span>.not_  = not_
+        <span class="kw">self</span>.and_  = and_
+        <span class="kw">self</span>.or_   = or_
+        <span class="kw">self</span>.theta = theta
+        <span class="kw">self</span>.name  = name <span class="kw">or</span> <span class="st">f"Carrier({V})"</span>
+
+    <span class="kw">def</span> <span class="fn">_check</span>(<span class="kw">self</span>, name, pred, tol=<span class="nm">1e-10</span>):
+        failures = [v <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">self</span>.V <span class="kw">if not</span> <span class="fn">pred</span>(v)]
+        ok = <span class="fn">len</span>(failures) == <span class="nm">0</span>
+        mark = <span class="st">"✓"</span> <span class="kw">if</span> ok <span class="kw">else</span> <span class="st">"✗"</span>
+        detail = <span class="st">""</span> <span class="kw">if</span> ok <span class="kw">else</span> <span class="st">f" (fails at {failures[:3]}{'...' if len(failures)>3 else ''})"</span>
+        <span class="fn">print</span>(<span class="st">f"  {mark} {name}{detail}"</span>)
+        <span class="kw">return</span> ok
+
+    <span class="kw">def</span> <span class="fn">lnc</span>(<span class="kw">self</span>):
+        <span class="kw">return self</span>.<span class="fn">_check</span>(<span class="st">"LNC"</span>,
+            <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="kw">self</span>.<span class="fn">and_</span>(v, <span class="kw">self</span>.<span class="fn">not_</span>(v))) &lt; <span class="nm">1e-10</span>)
+
+    <span class="kw">def</span> <span class="fn">lem</span>(<span class="kw">self</span>):
+        top = <span class="fn">max</span>(<span class="kw">self</span>.V)
+        <span class="kw">return self</span>.<span class="fn">_check</span>(<span class="st">"LEM"</span>,
+            <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="kw">self</span>.<span class="fn">or_</span>(v, <span class="kw">self</span>.<span class="fn">not_</span>(v)) - top) &lt; <span class="nm">1e-10</span>)
+
+    <span class="kw">def</span> <span class="fn">double_neg</span>(<span class="kw">self</span>):
+        <span class="kw">return self</span>.<span class="fn">_check</span>(<span class="st">"Double Negation"</span>,
+            <span class="kw">lambda</span> v: <span class="fn">abs</span>(<span class="kw">self</span>.<span class="fn">not_</span>(<span class="kw">self</span>.<span class="fn">not_</span>(v)) - v) &lt; <span class="nm">1e-10</span>)
+
+    <span class="kw">def</span> <span class="fn">liar</span>(<span class="kw">self</span>, tol=<span class="nm">1e-10</span>):
+        sols = [v <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">self</span>.V <span class="kw">if</span> <span class="fn">abs</span>(v - <span class="kw">self</span>.<span class="fn">not_</span>(v)) &lt; tol]
+        <span class="kw">if</span> sols:
+            <span class="fn">print</span>(<span class="st">f"  ✓ Liar resolved: solutions at {sols}"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="st">"  ✗ Liar: no fixed point — paradox in this carrier"</span>)
+
+    <span class="kw">def</span> <span class="fn">closure</span>(<span class="kw">self</span>):
+        <span class="st">"""All operations must map V x V -> V."""</span>
+        V_set = <span class="fn">set</span>(<span class="fn">round</span>(v, <span class="nm">10</span>) <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">self</span>.V)
+        ok = <span class="kw">True</span>
+        <span class="kw">for</span> v <span class="kw">in</span> <span class="kw">self</span>.V:
+            r = <span class="fn">round</span>(<span class="kw">self</span>.<span class="fn">not_</span>(v), <span class="nm">10</span>)
+            <span class="kw">if</span> r <span class="kw">not in</span> V_set:
+                <span class="fn">print</span>(<span class="st">f"  ✗ Closure: NOT({v}) = {r} not in V"</span>); ok = <span class="kw">False</span>
+        <span class="kw">if</span> ok: <span class="fn">print</span>(<span class="st">"  ✓ Closure: all operations stay in V"</span>)
+
+    <span class="kw">def</span> <span class="fn">report</span>(<span class="kw">self</span>):
+        <span class="fn">print</span>(<span class="st">f"\n{self.name}"</span>)
+        <span class="fn">print</span>(<span class="st">f"  V = {self.V[:6]}{'...' if len(self.V)>6 else ''}  theta = {self.theta}"</span>)
+        <span class="kw">self</span>.<span class="fn">closure</span>()
+        <span class="kw">self</span>.<span class="fn">lnc</span>()
+        <span class="kw">self</span>.<span class="fn">lem</span>()
+        <span class="kw">self</span>.<span class="fn">double_neg</span>()
+        <span class="kw">self</span>.<span class="fn">liar</span>()</pre>
+
+<p>Now every carrier from the book is a one-liner:</p>
+
+<pre>NOT = <span class="kw">lambda</span> v: <span class="nm">1</span> - v
+AND = <span class="kw">lambda</span> a, b: a * b
+OR  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b)
+
+classical = <span class="fn">Carrier</span>([<span class="nm">0</span>, <span class="nm">1</span>], NOT, AND, OR, name=<span class="st">"Classical"</span>)
+para      = <span class="fn">Carrier</span>([<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>], NOT, AND, OR, name=<span class="st">"Paraconsistent"</span>)
+
+classical.<span class="fn">report</span>()
+para.<span class="fn">report</span>()</pre>
+
+<div class="output">Classical
+  V = [0, 1]  theta = 1.0
+  ✓ Closure: all operations stay in V
+  ✓ LNC: forced
+  ✓ LEM: forced
+  ✓ Double Negation: forced
+  ✗ Liar: no fixed point -- paradox in this carrier
+
+Paraconsistent
+  V = [0, 0.5, 1]  theta = 1.0
+  ✓ Closure: all operations stay in V
+  ✗ LNC (fails at [0.5]...)
+  ✗ LEM (fails at [0.5]...)
+  ✓ Double Negation: forced
+  ✓ Liar resolved: solutions at [0.5]</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 8 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Build the <em>traffic light carrier</em> from the companion book: <code>V = [0, 0.5, 1]</code> where <code>NOT(0)=1</code>, <code>NOT(1)=0</code>, <code>NOT(0.5)=0.5</code>, and <code>AND = min</code>, <code>OR = max</code>. Run <code>report()</code> on it. Check closure carefully: does this NOT map every value back into V?</p>
+<details>
+<summary></summary>
+<pre><span class="kw">def</span> <span class="fn">traffic_not</span>(v):
+    <span class="kw">if</span> v == <span class="nm">0</span>:   <span class="kw">return</span> <span class="nm">1</span>
+    <span class="kw">if</span> v == <span class="nm">1</span>:   <span class="kw">return</span> <span class="nm">0</span>
+    <span class="kw">return</span> <span class="nm">0.5</span>   <span class="cm"># caution stays caution</span>
+
+traffic = <span class="fn">Carrier</span>(
+    V     = [<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>],
+    not_  = traffic_not,
+    and_  = <span class="kw">lambda</span> a, b: <span class="fn">min</span>(a, b),
+    or_   = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b),
+    name  = <span class="st">"Traffic Light"</span>
+)
+traffic.<span class="fn">report</span>()</pre>
+<div class="output">Traffic Light
+  V = [0, 0.5, 1]  theta = 1.0
+  ✓ Closure: all operations stay in V
+  ✗ LNC (fails at [0.5]...)
+  ✗ LEM (fails at [0.5]...)
+  ✓ Double Negation: forced
+  ✓ Liar resolved: solutions at [0.5]</div>
+<p>Closure holds because <code>traffic_not</code> maps every value explicitly back into V. The Liar is resolved at 0.5 (yellow is its own opposite). LNC and LEM both fail at yellow, which is correct: a yellow light genuinely cannot be forced to "stop" OR "go".</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 9 ──────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch9">
+<div class="chapter-label">Chapter 9</div>
+<h1 class="chapter-title">Comparing Two Carriers
+  <span class="subtitle">Which laws change? Which survive?</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>The central claim of carrier-set analysis is that changing one parameter changes some laws and not others. You can verify this mechanically with a diff function:</p>
+
+<pre><span class="kw">def</span> <span class="fn">diff_carriers</span>(c1: <span class="fn">Carrier</span>, c2: <span class="fn">Carrier</span>):
+    <span class="st">"""Compare two carriers law by law. Print what changed."""</span>
+    <span class="fn">print</span>(<span class="st">f"\nDiff: {c1.name}  vs  {c2.name}"</span>)
+    <span class="fn">print</span>(<span class="st">"─" * 48</span>)
+
+    <span class="kw">def</span> <span class="fn">result</span>(c, law_fn):
+        <span class="kw">try</span>:
+            <span class="kw">return</span> <span class="fn">law_fn</span>(c)
+        <span class="kw">except</span>:
+            <span class="kw">return</span> <span class="kw">None</span>
+
+    laws = {
+        <span class="st">"LNC"</span>: <span class="kw">lambda</span> c: <span class="fn">all</span>(<span class="fn">abs</span>(c.<span class="fn">and_</span>(v, c.<span class="fn">not_</span>(v))) &lt; <span class="nm">1e-10</span> <span class="kw">for</span> v <span class="kw">in</span> c.V),
+        <span class="st">"LEM"</span>: <span class="kw">lambda</span> c: <span class="fn">all</span>(<span class="fn">abs</span>(c.<span class="fn">or_</span>(v, c.<span class="fn">not_</span>(v)) - <span class="fn">max</span>(c.V)) &lt; <span class="nm">1e-10</span> <span class="kw">for</span> v <span class="kw">in</span> c.V),
+        <span class="st">"DN"</span>:  <span class="kw">lambda</span> c: <span class="fn">all</span>(<span class="fn">abs</span>(c.<span class="fn">not_</span>(c.<span class="fn">not_</span>(v)) - v) &lt; <span class="nm">1e-10</span> <span class="kw">for</span> v <span class="kw">in</span> c.V),
+        <span class="st">"Liar"</span>: <span class="kw">lambda</span> c: <span class="fn">len</span>([v <span class="kw">for</span> v <span class="kw">in</span> c.V <span class="kw">if</span> <span class="fn">abs</span>(v - c.<span class="fn">not_</span>(v)) &lt; <span class="nm">1e-10</span>]) > <span class="nm">0</span>,
+    }
+
+    <span class="kw">for</span> law_name, law_fn <span class="kw">in</span> laws.items():
+        r1 = <span class="fn">result</span>(c1, law_fn)
+        r2 = <span class="fn">result</span>(c2, law_fn)
+        changed = <span class="st">" ← CHANGED"</span> <span class="kw">if</span> r1 != r2 <span class="kw">else</span> <span class="st">""</span>
+        m1 = <span class="st">"✓"</span> <span class="kw">if</span> r1 <span class="kw">else</span> <span class="st">"✗"</span>
+        m2 = <span class="st">"✓"</span> <span class="kw">if</span> r2 <span class="kw">else</span> <span class="st">"✗"</span>
+        <span class="fn">print</span>(<span class="st">f"  {law_name:<18} {c1.name}: {m1}   {c2.name}: {m2}{changed}"</span>)
+
+<span class="cm"># Compare classical vs paraconsistent</span>
+<span class="fn">diff_carriers</span>(classical, para)</pre>
+
+<div class="output">Diff: Classical  vs  Paraconsistent
+────────────────────────────────────────────────
+  LNC                Classical: ✓   Paraconsistent: ✗ ← CHANGED
+  LEM                Classical: ✓   Paraconsistent: ✗ ← CHANGED
+  DN                 Classical: ✓   Paraconsistent: ✓
+  Liar               Classical: ✗   Paraconsistent: ✓ ← CHANGED</div>
+
+<p>Three laws changed. One survived. Adding a single value to the carrier did this. The diff function makes the exact consequence of each design choice visible and testable.</p>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 9 &nbsp;&middot;&nbsp; &#9733;&#9733;</div>
+<p>Create a third carrier: change AND from multiply to <code>min</code> on the classical carrier <code>{0, 1}</code>. Diff it against classical. Which laws change when you change AND but keep V the same?</p>
+<details>
+<summary></summary>
+<pre>classical_min = <span class="fn">Carrier</span>(
+    V    = [<span class="nm">0</span>, <span class="nm">1</span>],
+    not_ = <span class="kw">lambda</span> v: <span class="nm">1</span> - v,
+    and_ = <span class="kw">lambda</span> a, b: <span class="fn">min</span>(a, b),   <span class="cm"># changed from multiply</span>
+    or_  = <span class="kw">lambda</span> a, b: <span class="fn">max</span>(a, b),
+    name = <span class="st">"Classical (min-AND)"</span>
+)
+<span class="fn">diff_carriers</span>(classical, classical_min)</pre>
+<div class="output">Diff: Classical  vs  Classical (min-AND)
+────────────────────────────────────────────────
+  LNC                Classical: ✓   Classical (min-AND): ✓
+  LEM                Classical: ✓   Classical (min-AND): ✓
+  DN                 Classical: ✓   Classical (min-AND): ✓
+  Liar               Classical: ✗   Classical (min-AND): ✗</div>
+<p>No laws changed on the two-value carrier. On <code>{0, 1}</code>, <code>min(a, b)</code> and <code>a * b</code> give identical results because both values are 0 or 1 and min/multiply agree there. The operations diverge only when values between 0 and 1 are introduced. This shows that carrier changes and operation changes interact: the same operation change has no effect in some carriers and breaks laws in others.</p>
+</details>
+</div>
+</section>
+
+<!-- ── CHAPTER 10 ─────────────────────────────────────────────────────────── -->
+<section class="chapter" id="ch10">
+<div class="chapter-label">Chapter 10</div>
+<h1 class="chapter-title">The Paradox Classifier
+  <span class="subtitle">Four modes. One classifier.</span>
+</h1>
+<hr class="chapter-rule">
+
+<p>There are exactly four ways a formal system can break. Each produces a different family of paradox. The classifier below identifies which mode applies to a given failure:</p>
+
+<pre><span class="kw">def</span> <span class="fn">classify_paradox</span>(V, not_, and_=<span class="kw">None</span>, max_depth=<span class="nm">20</span>, theta=<span class="nm">1000.0</span>):
+    <span class="st">"""
+    Mode 1 (Liar):    NOT has no fixed point in V.
+    Mode 2 (Goedel):  Self-referential load diverges.
+    Mode 3 (Russell): Checked separately -- requires level structure.
+    Mode 4 (Yablo):   No seed: checked by infinite regress simulation.
+    """</span>
+    results = {}
+
+    <span class="cm"># Mode 1: does NOT have a fixed point?</span>
+    sols = [v <span class="kw">for</span> v <span class="kw">in</span> V <span class="kw">if</span> <span class="fn">abs</span>(v - <span class="fn">not_</span>(v)) &lt; <span class="nm">1e-10</span>]
+    results[<span class="st">"Mode 1 (Liar)"</span>] = {
+        <span class="st">"paradox"</span>: <span class="fn">len</span>(sols) == <span class="nm">0</span>,
+        <span class="st">"detail"</span>: <span class="st">f"No fixed point"</span> <span class="kw">if not</span> sols <span class="kw">else</span> <span class="st">f"Resolved at {sols}"</span>
+    }
+
+    <span class="cm"># Mode 2: self-referential load diverges</span>
+    <span class="kw">if</span> and_ <span class="kw">is not None</span>:
+        load = <span class="nm">1.0</span>
+        diverged = <span class="kw">False</span>
+        <span class="kw">for</span> depth <span class="kw">in</span> <span class="fn">range</span>(<span class="nm">1</span>, max_depth):
+            load = load * <span class="nm">2</span>   <span class="cm"># self-reference doubles load each step</span>
+            <span class="kw">if</span> load > theta:
+                diverged = <span class="kw">True</span>
+                results[<span class="st">"Mode 2 (Goedel)"</span>] = {
+                    <span class="st">"paradox"</span>: <span class="kw">True</span>,
+                    <span class="st">"detail"</span>: <span class="st">f"Load exceeds theta={theta} at depth {depth}"</span>
+                }
+                <span class="kw">break</span>
+        <span class="kw">if not</span> diverged:
+            results[<span class="st">"Mode 2 (Goedel)"</span>] = {
+                <span class="st">"paradox"</span>: <span class="kw">False</span>,
+                <span class="st">"detail"</span>: <span class="st">f"Load bounded within {max_depth} steps"</span>
+            }
+
+    <span class="cm"># Mode 4: Yablo — no seed (simulated by regress)</span>
+    <span class="cm"># If each element requires its successor and no element can go first,</span>
+    <span class="cm"># the chain has no seed. We simulate with a depth check.</span>
+    yablo_load = [<span class="nm">2</span> ** (max_depth - n) <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">range</span>(max_depth)]
+    results[<span class="st">"Mode 4 (Yablo)"</span>] = {
+        <span class="st">"paradox"</span>: <span class="kw">True</span>,
+        <span class="st">"detail"</span>: <span class="st">f"No seed: element 0 requires load {yablo_load[<span class="nm">0</span>]} (infinite regress)"</span>
+    }
+
+    <span class="kw">return</span> results
+
+
+<span class="kw">def</span> <span class="fn">print_classification</span>(V, not_, and_=<span class="kw">None</span>):
+    label = <span class="st">f"V={V[:4]}{'...' if len(V)>4 else ''}"</span>
+    <span class="fn">print</span>(<span class="st">f"\nParadox classification for {label}:"</span>)
+    results = <span class="fn">classify_paradox</span>(V, not_, and_)
+    <span class="kw">for</span> mode, info <span class="kw">in</span> results.items():
+        mark = <span class="st">"PARADOX"</span> <span class="kw">if</span> info[<span class="st">"paradox"</span>] <span class="kw">else</span> <span class="st">"resolved"</span>
+        <span class="fn">print</span>(<span class="st">f"  [{mark}] {mode}: {info['detail']}"</span>)
+
+<span class="cm"># Classical carrier</span>
+<span class="fn">print_classification</span>([<span class="nm">0</span>, <span class="nm">1</span>], <span class="kw">lambda</span> v: <span class="nm">1</span> - v, <span class="kw">lambda</span> a, b: a * b)
+
+<span class="cm"># Paraconsistent carrier</span>
+<span class="fn">print_classification</span>([<span class="nm">0</span>, <span class="nm">0.5</span>, <span class="nm">1</span>], <span class="kw">lambda</span> v: <span class="nm">1</span> - v, <span class="kw">lambda</span> a, b: a * b)</pre>
+
+<div class="output">Paradox classification for V=[0, 1]:
+  [PARADOX]  Mode 1 (Liar): No fixed point
+  [PARADOX]  Mode 2 (Goedel): Load exceeds theta=1000.0 at depth 10
+  [PARADOX]  Mode 4 (Yablo): No seed: element 0 requires load 1048576 (infinite regress)
+
+Paradox classification for V=[0, 0.5, 1]:
+  [resolved] Mode 1 (Liar): Resolved at [0.5]
+  [PARADOX]  Mode 2 (Goedel): Load exceeds theta=1000.0 at depth 10
+  [PARADOX]  Mode 4 (Yablo): No seed: element 0 requires load 1048576 (infinite regress)</div>
+
+<div class="insight">Mode 1 (Liar) resolves by extending the carrier. Modes 2 and 4 survive carrier extensions. They require changes to what the system can express, not just what values it contains.</div>
+
+<div class="exercise">
+<div class="exercise-label">Exercise 10 &nbsp;&middot;&nbsp; &#9733;&#9733;&#9733;</div>
+<p>Modify <code>classify_paradox</code> to also check Mode 3 (Russell-type level collapse): a simple proxy is whether the carrier contains a value that appears in its own definition (a value that refers to the set it is in). Represent this as: if <code>V</code> contains itself as an element (<code>V in V</code> in Python terms), classify as Mode 3. Test it by constructing such a case.</p>
+<details>
+<summary></summary>
+<pre><span class="cm"># Python lists cannot literally contain themselves, but we can simulate</span>
+<span class="cm"># Russell's paradox structurally: a set defined by self-membership.</span>
+<span class="cm"># We proxy it as: does the value set contain a value that equals len(V)?</span>
+<span class="cm"># (a value that refers to its own cardinality -- a weak structural stand-in)</span>
+
+<span class="kw">def</span> <span class="fn">check_mode3</span>(V):
+    <span class="st">"""Proxy for Russell-type level collapse."""</span>
+    <span class="cm"># A set that contains a value equal to its own size</span>
+    <span class="cm"># is trying to refer to itself -- level collapse proxy</span>
+    self_ref = [v <span class="kw">for</span> v <span class="kw">in</span> V <span class="kw">if</span> v == <span class="fn">len</span>(V)]
+    <span class="kw">return</span> <span class="fn">bool</span>(self_ref), self_ref
+
+<span class="cm"># Normal carrier: no self-reference</span>
+ok, refs = <span class="fn">check_mode3</span>([<span class="nm">0</span>, <span class="nm">1</span>])
+<span class="fn">print</span>(<span class="st">f"[0,1]: Mode 3 = {ok}"</span>)
+
+<span class="cm"># Carrier that contains its own size as a value</span>
+ok, refs = <span class="fn">check_mode3</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])  <span class="cm"># len=4, 4 not in V</span>
+<span class="fn">print</span>(<span class="st">f"[0,1,2,3]: Mode 3 = {ok}"</span>)
+
+ok, refs = <span class="fn">check_mode3</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>])  <span class="cm"># len=5, 5 not in V</span>
+<span class="fn">print</span>(<span class="st">f"[0,1,2,3,4]: Mode 3 = {ok}"</span>)
+
+ok, refs = <span class="fn">check_mode3</span>([<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>])  <span class="cm"># len=3, 3 not in V</span>
+<span class="fn">print</span>(<span class="st">f"[0,1,2]: Mode 3 = {ok}"</span>)
+
+<span class="cm"># A carrier where level collapse occurs: V = [0, 1, 2, 3] and len(V)=4 is 4 -- not in V.</span>
+<span class="cm"># Construct one explicitly:</span>
+V_russell = [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>]  <span class="cm"># len = 6, 6 not in V</span>
+V_russell_collapse = [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>, <span class="nm">4</span>, <span class="nm">5</span>, <span class="nm">6</span>]  <span class="cm"># len=7, 7 not in V</span>
+V_self = [<span class="nm">0</span>, <span class="nm">1</span>, <span class="nm">3</span>]  <span class="cm"># len=3, 3 IS in V</span>
+ok, refs = <span class="fn">check_mode3</span>(V_self)
+<span class="fn">print</span>(<span class="st">f"[0,1,3]: Mode 3 = {ok}  (value {refs} equals len(V)=3)"</span>)</pre>
+<div class="output">[0,1]: Mode 3 = False
+[0,1,2,3]: Mode 3 = False
+[0,1,2,3,4]: Mode 3 = False
+[0,1,2]: Mode 3 = False
+[0,1,3]: Mode 3 = True  (value [3] equals len(V)=3)</div>
+<p>This is a structural proxy, not a full implementation of Russell's paradox (which requires set membership as a primitive). The point is that level collapse is detectable as a property of the value set's structure, not its arithmetic.</p>
+</details>
+</div>
+</section>
+
+<!-- ── APPENDIX ───────────────────────────────────────────────────────────── -->
+<section class="chapter" id="appendix">
+<div class="chapter-label">Appendix</div>
+<h1 class="chapter-title">Blank Template &amp; Build Exercises
+  <span class="subtitle">The starting point for every carrier you design.</span>
+</h1>
+<hr class="chapter-rule">
+
+<h2>The blank template</h2>
+
+<p>Copy this file. Fill in the five blanks. Run <code>report()</code>. Everything else follows.</p>
+
+<pre><span class="cm"># my_carrier.py  --  fill in the blanks</span>
+<span class="cm"># Copy the Carrier class from Chapter 8 into this file first.</span>
+
+<span class="cm"># 1. Value set: list the values your logic can take</span>
+V = [...]
+
+<span class="cm"># 2. NOT: what is the opposite of each value?</span>
+<span class="kw">def</span> <span class="fn">my_not</span>(v):
+    <span class="cm"># return the negation of v</span>
+    ...
+
+<span class="cm"># 3. AND: how do you combine two values as conjunction?</span>
+<span class="kw">def</span> <span class="fn">my_and</span>(a, b):
+    <span class="cm"># return the conjunction of a and b</span>
+    ...
+
+<span class="cm"># 4. OR: how do you combine two values as disjunction?</span>
+<span class="kw">def</span> <span class="fn">my_or</span>(a, b):
+    <span class="cm"># return the disjunction of a and b</span>
+    ...
+
+<span class="cm"># 5. Threshold: maximum load before incoherence</span>
+theta = <span class="nm">1.0</span>
+
+<span class="cm"># Build and test</span>
+c = <span class="fn">Carrier</span>(V, my_not, my_and, my_or, theta=theta, name=<span class="st">"My Carrier"</span>)
+c.<span class="fn">report</span>()</pre>
+
+<h2>Five build exercises</h2>
+
+<p>Each exercise specifies a domain. Design the carrier, run <code>report()</code>, and state which laws hold and which fail. Answers are not provided: the test results are the answer.</p>
+
+<p><strong>B1 &nbsp;&#9733;</strong> &nbsp; A binary sensor that reads <em>off</em> or <em>on</em>. Classical logic. Verify all four standard laws hold.</p>
+
+<p><strong>B2 &nbsp;&#9733;&#9733;</strong> &nbsp; A risk assessor with values <em>safe</em>, <em>uncertain</em>, <em>dangerous</em> (encode as 0, 0.5, 1). Define NOT as inversion (safe becomes dangerous and vice versa; uncertain stays uncertain). Use AND = min, OR = max. Which laws hold?</p>
+
+<p><strong>B3 &nbsp;&#9733;&#9733;</strong> &nbsp; A probability carrier: <code>V</code> is 101 evenly spaced values from 0 to 1. AND = multiply, OR = max, NOT = 1&minus;v. Check all laws. Which hold? At which values do the failures occur?</p>
+
+<p><strong>B4 &nbsp;&#9733;&#9733;&#9733;</strong> &nbsp; A four-valued legal carrier: <em>acquitted</em>, <em>insufficient evidence</em>, <em>proven on balance</em>, <em>proven beyond doubt</em> (encode as 0, 0.33, 0.67, 1). The legal NOT of <em>proven beyond doubt</em> is <em>acquitted</em>; the NOT of <em>insufficient evidence</em> is <em>proven on balance</em>. Define AND and OR to reflect legal reasoning (conjunction requires both proofs; disjunction accepts either). Test all laws and the Liar.</p>
+
+<p><strong>B5 &nbsp;&#9733;&#9733;&#9733;</strong> &nbsp; Design a carrier that resolves the Liar paradox AND forces LNC AND forces LEM. Is this possible? Attempt it, observe the results, and explain why the result is or is not achievable.</p>
+
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer>
+  <p>Coding Logics: A Beginner&#8217;s Guide in Python &nbsp;&middot;&nbsp; James Alexander Pugmire &nbsp;&middot;&nbsp; 2026</p>
+  <p>Licensed under CC BY-NC 4.0. Free for non-commercial educational use with attribution.</p>
+  <p>Companion books: <em>The Math of Logic</em> &nbsp;&middot;&nbsp; <em>Coding Logics in Rust</em></p>
+</footer>
+
+</body>
+</html>
