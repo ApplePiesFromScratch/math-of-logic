@@ -1,0 +1,1481 @@
+#!/usr/bin/env python3
+"""
+carrier_archive.py  —  The Propagation Logic Carrier Archive
+James Alexander Pugmire · Propagation Logic Project · 2026
+
+A complete catalogue of formal logical systems from global traditions,
+reduced to their carrier arithmetic: V, NOT, AND, OR, theta.
+
+IMPORTANT NOTE ON NON-WESTERN TRADITIONS:
+The carrier formulation is an approximation. Frameworks that were not designed
+as formal propositional logics are translated here structurally, not
+philosophically. The cultural_context field carries the caveat. The ML notes
+reflect genuine structural homologies, not cultural appropriation.
+Read each entry as: "this structure behaves like this carrier" — not as
+"this tradition believed this formal system."
+
+Usage:
+    from carrier_archive import REGISTRY, check_laws, compare_carriers, genealogy
+
+    c = REGISTRY['classical']
+    print(check_laws(c))
+
+    compare_carriers(REGISTRY['classical'], REGISTRY['lukasiewicz_3'])
+
+    for node in genealogy('classical'):
+        print(node)
+"""
+
+from __future__ import annotations
+import math
+from dataclasses import dataclass, field
+from typing import Callable, List, Optional, Dict
+
+TOL = 1e-10
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CARRIER DEFINITION
+# ══════════════════════════════════════════════════════════════════════════════
+
+@dataclass
+class Carrier:
+    """
+    A complete formal logical system as a carrier set.
+
+    Fields:
+        id              Machine-readable identifier
+        name            Human-readable name
+        tradition       Cultural/intellectual tradition
+        period          Approximate origin (negative = BCE)
+        origin          Key figure(s)
+
+        V               Value space (list of floats)
+        V_desc          Plain-language description of V
+        designated      Values that count as "true/holding"
+
+        not_fn          NOT operation: V -> V
+        and_fn          AND operation: V x V -> V
+        or_fn           OR operation: V x V -> V
+        theta           Coherence threshold
+
+        special         Additional named operations
+        parents         Parent carrier IDs (what this branches from)
+        children        Child carrier IDs (what branches from this)
+
+        key_insight     The core idea that distinguishes this carrier
+        ml_note         Genuine ML application
+        cultural_note   Context, caveats, and honest scope
+    """
+    id:           str
+    name:         str
+    tradition:    str
+    period:       str
+    origin:       str
+
+    V:            List[float]
+    V_desc:       str
+    designated:   List[float]
+
+    not_fn:       Callable
+    and_fn:       Callable
+    or_fn:        Callable
+    theta:        float = 1.0
+
+    special:      Dict[str, Callable] = field(default_factory=dict)
+    parents:      List[str]           = field(default_factory=list)
+    children:     List[str]           = field(default_factory=list)
+
+    key_insight:  str = ""
+    ml_note:      str = ""
+    cultural_note:str = ""
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LAW CHECKING UTILITIES
+# ══════════════════════════════════════════════════════════════════════════════
+
+def check_lnc(c: Carrier) -> tuple:
+    failures = [v for v in c.V if abs(c.and_fn(v, c.not_fn(v))) > TOL]
+    return (len(failures) == 0, failures[:5])
+
+def check_lem(c: Carrier) -> tuple:
+    top = max(c.V)
+    failures = [v for v in c.V if abs(c.or_fn(v, c.not_fn(v)) - top) > TOL]
+    return (len(failures) == 0, failures[:5])
+
+def check_dn(c: Carrier) -> tuple:
+    failures = [v for v in c.V if abs(c.not_fn(c.not_fn(v)) - v) > TOL]
+    return (len(failures) == 0, failures[:5])
+
+def liar_solutions(c: Carrier) -> List[float]:
+    return [v for v in c.V if abs(v - c.not_fn(v)) < TOL]
+
+def check_laws(c: Carrier) -> Dict:
+    lnc, lnc_f = check_lnc(c)
+    lem, lem_f = check_lem(c)
+    dn,  dn_f  = check_dn(c)
+    liar       = liar_solutions(c)
+    return {
+        "carrier":  c.name,
+        "LNC":      ("forced" if lnc else f"fails at {lnc_f}"),
+        "LEM":      ("forced" if lem else f"fails at {lem_f}"),
+        "DN":       ("forced" if dn  else f"fails at {dn_f}"),
+        "Liar":     (f"resolved at {liar}" if liar else "paradox (no fixed point)"),
+    }
+
+def compare_carriers(c1: Carrier, c2: Carrier):
+    r1, r2 = check_laws(c1), check_laws(c2)
+    print(f"\nDiff: {c1.name}  vs  {c2.name}")
+    print("─" * 60)
+    for k in ["LNC", "LEM", "DN", "Liar"]:
+        changed = "  ← CHANGED" if r1[k] != r2[k] else ""
+        print(f"  {k:<8} {c1.name[:20]}: {str(r1[k])[:25]:<26}  {c2.name[:20]}: {str(r2[k])[:25]}{changed}")
+
+def report(c: Carrier):
+    laws = check_laws(c)
+    print(f"\n{'═'*60}")
+    print(f"  {c.name}")
+    print(f"  {c.tradition}  |  {c.period}  |  {c.origin}")
+    print(f"  V = {c.V[:8]}{'...' if len(c.V)>8 else ''}")
+    print(f"  theta = {c.theta}")
+    print(f"{'─'*60}")
+    for k in ["LNC","LEM","DN","Liar"]:
+        mark = "✓" if "forced" in str(laws[k]) or "resolved" in str(laws[k]) else "✗"
+        print(f"  {mark} {k}: {laws[k]}")
+    if c.special:
+        print(f"  Special ops: {list(c.special.keys())}")
+    if c.key_insight:
+        print(f"\n  ▶ {c.key_insight}")
+    if c.ml_note:
+        print(f"  ML: {c.ml_note}")
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# GENEALOGY
+# ══════════════════════════════════════════════════════════════════════════════
+
+def genealogy(carrier_id: str, registry: Dict, depth=0, seen=None) -> str:
+    if seen is None: seen = set()
+    if carrier_id in seen: return ""
+    seen.add(carrier_id)
+    c = registry.get(carrier_id)
+    if not c: return ""
+    lines = ["  " * depth + f"{'└─ ' if depth else ''}{c.name}  [{c.period}]"]
+    for child_id in c.children:
+        sub = genealogy(child_id, registry, depth+1, seen)
+        if sub: lines.append(sub)
+    return "\n".join(lines)
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# HELPER FUNCTIONS
+# ══════════════════════════════════════════════════════════════════════════════
+
+def linspace(start, stop, n):
+    return [start + i*(stop-start)/(n-1) for i in range(n)]
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# THE CARRIERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _build_registry():
+    R = {}
+
+    # ── 1. CLASSICAL LOGIC ────────────────────────────────────────────────────
+    R['classical'] = Carrier(
+        id='classical', name="Classical (Boolean) Logic",
+        tradition="Western Formal", period="~-350 / formalised 1847",
+        origin="Aristotle; formalised by Boole",
+        V=[0.0, 1.0], V_desc="False (0) and True (1). Two values only.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=[], children=['intuitionistic','paraconsistent_lp',
+                               'lukasiewicz_3','modal_k','linear',
+                               'relevance','quantum','probability'],
+        key_insight="Every proposition is exactly true or false. All distinctions are free and sharp.",
+        ml_note="Binary classification, Boolean circuits, SAT solvers, decision trees. "
+                "Maximally efficient on binary problems. Incurs full distinction debt on continuous data.",
+        cultural_note="Foundation of Western formal logic. Aristotle's syllogistic was not propositional; "
+                      "Boole and Frege built the modern form. Russell/Whitehead completed the formalisation.",
+    )
+
+    # ── 2. INTUITIONISTIC LOGIC ──────────────────────────────────────────────
+    R['intuitionistic'] = Carrier(
+        id='intuitionistic', name="Intuitionistic (Constructive) Logic",
+        tradition="Western Formal", period="1907",
+        origin="L.E.J. Brouwer; formalised by Heyting (1930)",
+        V=[0.0, 1.0], V_desc="Same values as classical, but OR is restricted.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # LEM cannot be applied: OR(v, NOT(v)) is not a valid step
+            # This is a Gamma restriction, not a V change
+            'lem_restricted': lambda v: None,  # signifies unavailability
+        },
+        parents=['classical'], children=['minimal_logic','martin_lof'],
+        key_insight="LEM is unreachable: OR is not in the gradient family. "
+                    "To assert 'P or not-P' you must construct a proof of one or the other. "
+                    "Existence proofs must be constructive.",
+        ml_note="Type theory, proof assistants (Coq, Agda, Lean). "
+                "Constructive proofs generate programs. The Curry-Howard correspondence. "
+                "Every proof is an algorithm.",
+        cultural_note="Brouwer's philosophical motivation was anti-Platonist: "
+                      "mathematical objects are mental constructions, not discovered.",
+    )
+
+    # ── 3. MINIMAL LOGIC ─────────────────────────────────────────────────────
+    R['minimal_logic'] = Carrier(
+        id='minimal_logic', name="Minimal Logic (Johansson)",
+        tradition="Western Formal", period="1936",
+        origin="Ingebrigt Johansson",
+        V=[0.0, 1.0], V_desc="Classical values. Ex Falso removed.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['intuitionistic'], children=[],
+        key_insight="Even weaker than intuitionistic. Ex Falso Quodlibet (from contradiction, "
+                    "anything follows) is removed. A false premise cannot be used to derive anything.",
+        ml_note="Relevant to paraconsistent AI reasoning: a bug in one module should not "
+                "corrupt all conclusions system-wide.",
+        cultural_note="A response to Russell's paradox: why should a contradiction allow "
+                      "arbitrary conclusions? Minimal logic says it should not.",
+    )
+
+    # ── 4. PARACONSISTENT LP ─────────────────────────────────────────────────
+    R['paraconsistent_lp'] = Carrier(
+        id='paraconsistent_lp', name="Paraconsistent Logic LP",
+        tradition="Western Formal", period="1974",
+        origin="Newton da Costa; Graham Priest",
+        V=[0.0, 0.5, 1.0],
+        V_desc="False (0), Both-true-and-false (0.5), True (1). B is designated.",
+        designated=[0.5, 1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['classical'], children=['dialethism','belnap_four'],
+        key_insight="LNC fails at B=0.5: a contradiction exists but does not explode. "
+                    "Ex Falso is blocked. Inconsistent databases can be queried without "
+                    "everything becoming trivially true.",
+        ml_note="Handling contradictory training data. Conflict resolution in knowledge graphs. "
+                "Robust reasoning over inconsistent sources. The B value = 'conflicting evidence'.",
+        cultural_note="Motivated by real inconsistencies in scientific theories during transition "
+                      "periods (e.g., early quantum mechanics contradicted classical physics "
+                      "without everything being abandoned).",
+    )
+
+    # ── 5. DIALETHISM ────────────────────────────────────────────────────────
+    R['dialethism'] = Carrier(
+        id='dialethism', name="Dialethism (True Contradictions)",
+        tradition="Western Formal", period="1987",
+        origin="Graham Priest, Richard Routley",
+        V=[0.0, 0.5, 1.0],
+        V_desc="Some propositions are BOTH true and false. B is a genuine truth value, not just 'unknown'.",
+        designated=[0.5, 1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['paraconsistent_lp'], children=[],
+        key_insight="The Liar sentence IS true AND false (value 0.5 is a genuine designation, "
+                    "not a placeholder for ignorance). Some contradictions are simply true.",
+        ml_note="Handling genuine semantic paradoxes in NLP. Self-referential statements in "
+                "dialogue systems. The 'both' category is ontological, not epistemic.",
+        cultural_note="Philosophically controversial. Priest argues the Liar is a genuine "
+                      "dialetheia. Connects to Buddhist Madhyamaka (see below).",
+    )
+
+    # ── 6. BELNAP'S FOUR-VALUED (FOUR) ──────────────────────────────────────
+    R['belnap_four'] = Carrier(
+        id='belnap_four', name="Belnap's FOUR (Bilattice Logic)",
+        tradition="Western Formal", period="1977",
+        origin="Nuel Belnap",
+        V=[0.0, 0.33, 0.67, 1.0],
+        V_desc="None (0), False-only (0.33), True-only (0.67), Both (1.0). "
+               "A bilattice: two dimensions (truth and information).",
+        designated=[0.67, 1.0],
+        not_fn=lambda v: {0.0:0.0, 0.33:0.67, 0.67:0.33, 1.0:1.0}.get(round(v,2), 1.0-v),
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            'consensus': lambda a, b: min(a, b),   # meet on information dimension
+            'gullibility': lambda a, b: max(a, b), # join on information dimension
+        },
+        parents=['paraconsistent_lp'], children=[],
+        key_insight="Designed for databases with incomplete or contradictory information. "
+                    "NONE (no information), FALSE (told it's false), TRUE (told it's true), "
+                    "BOTH (told both). The computer does not decide — it reports what it was told.",
+        ml_note="Knowledge base reasoning with incomplete data. Multi-source fusion. "
+                "Conflict-tolerant information retrieval. Natural fit for knowledge graphs.",
+        cultural_note="Motivated by practical database problems: what should a database say "
+                      "when queried about something it has conflicting information about?",
+    )
+
+    # ── 7. ŁUKASIEWICZ 3-VALUED ──────────────────────────────────────────────
+    V_luk3 = [0.0, 0.5, 1.0]
+    R['lukasiewicz_3'] = Carrier(
+        id='lukasiewicz_3', name="Łukasiewicz 3-Valued Logic",
+        tradition="Western Formal", period="1920",
+        origin="Jan Łukasiewicz",
+        V=V_luk3, V_desc="False (0), Indeterminate (0.5), True (1).",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Łukasiewicz implication: min(1, 1-a+b)
+            'implies': lambda a, b: min(1.0, 1.0 - a + b),
+        },
+        parents=['classical'], children=['lukasiewicz_n','lukasiewicz_fuzzy'],
+        key_insight="Motivated by future contingents: 'There will be a sea battle tomorrow.' "
+                    "Not true yet, not false yet. The third value is 'as yet undetermined.' "
+                    "LNC and LEM both fail at 0.5.",
+        ml_note="Uncertainty quantification with three confidence levels. "
+                "Temporal reasoning about future events. Handling 'pending' states in workflows.",
+        cultural_note="Łukasiewicz was responding to Aristotle's discussion of future contingents "
+                      "in De Interpretatione. Also motivated by Aristotelian modal syllogistic.",
+    )
+
+    # ── 8. ŁUKASIEWICZ n-VALUED / INFINITE-VALUED ────────────────────────────
+    n = 11
+    V_lukn = [i/(n-1) for i in range(n)]
+    R['lukasiewicz_n'] = Carrier(
+        id='lukasiewicz_n', name="Łukasiewicz n-Valued Logic",
+        tradition="Western Formal", period="1922",
+        origin="Jan Łukasiewicz",
+        V=V_lukn, V_desc=f"n evenly spaced values from 0 to 1 (here n={n}).",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: max(0.0, a + b - 1.0),  # Łukasiewicz AND
+        or_fn=lambda a, b: min(1.0, a + b),           # Łukasiewicz OR
+        theta=1.0,
+        special={
+            'implies': lambda a, b: min(1.0, 1.0 - a + b),
+        },
+        parents=['lukasiewicz_3'], children=['lukasiewicz_fuzzy'],
+        key_insight="AND(a,b) = max(0, a+b-1) is the 'bold' conjunction: true only when "
+                    "combined confidence exceeds 1. OR(a,b) = min(1, a+b) is additive. "
+                    "These satisfy LNC but not in the standard way.",
+        ml_note="Probability-like reasoning without Bayesian structure. "
+                "Bounded arithmetic for resource constraints. Łukasiewicz AND = 'both exceed half.'",
+        cultural_note="The infinite-valued version approaches probability theory structurally "
+                      "but differs crucially: it is not additive over mutually exclusive events.",
+    )
+
+    # ── 9. FUZZY LOGIC (ZADEH / GÖDEL / PRODUCT) ────────────────────────────
+    V_cont = linspace(0.0, 1.0, 101)
+
+    R['fuzzy_zadeh'] = Carrier(
+        id='fuzzy_zadeh', name="Fuzzy Logic (Zadeh / Standard)",
+        tradition="Western Formal", period="1965",
+        origin="Lotfi A. Zadeh",
+        V=V_cont, V_desc="Continuous [0,1]. Every degree of membership between 0 and 1.",
+        designated=[v for v in V_cont if v > 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['lukasiewicz_n'], children=['fuzzy_product','fuzzy_goedel'],
+        key_insight="Membership in a set is a matter of degree. 'Tall' is not binary; "
+                    "a person 1.8m is 'tall' to degree 0.7, not tall/not-tall. "
+                    "LNC and LEM both fail at 0.5.",
+        ml_note="Fuzzy control systems (washing machines, ABS brakes, HVAC). "
+                "Fuzzy classifiers for imprecise categories. Natural language processing "
+                "of gradable adjectives. Handles the sorites paradox natively.",
+        cultural_note="Zadeh was responding to the brittleness of classical control theory. "
+                      "Enormously successful in engineering, controversial in logic (is it 'real' logic?).",
+    )
+
+    R['fuzzy_product'] = Carrier(
+        id='fuzzy_product', name="Product Fuzzy Logic",
+        tradition="Western Formal", period="1970s",
+        origin="Developed from Zadeh by Höhle and others",
+        V=V_cont, V_desc="[0,1] continuous. AND = multiplication.",
+        designated=[v for v in V_cont if v > 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['fuzzy_zadeh'], children=[],
+        key_insight="AND = multiply. Independent membership grades combine multiplicatively, "
+                    "matching probability theory for independent events. The carrier underlying "
+                    "classical Propagation Logic.",
+        ml_note="Probabilistic graphical models. Naive Bayes classifiers (implicit product AND). "
+                "This is the arithmetic behind most probabilistic ML.",
+        cultural_note="The most common fuzzy AND in ML contexts because it matches "
+                      "probabilistic intuitions.",
+    )
+
+    R['fuzzy_goedel'] = Carrier(
+        id='fuzzy_goedel', name="Gödel Fuzzy Logic",
+        tradition="Western Formal", period="1932",
+        origin="Kurt Gödel (intermediate logic); fuzzy version by Dummett (1959)",
+        V=V_cont, V_desc="[0,1] continuous. AND = min.",
+        designated=[v for v in V_cont if v > 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Gödel implication: 1 if a<=b, else b
+            'implies': lambda a, b: 1.0 if a <= b else b,
+        },
+        parents=['fuzzy_zadeh'], children=[],
+        key_insight="AND = min (weakest input determines output). The most conservative conjunction: "
+                    "the chain is as strong as its weakest link. LNC fails only at v=0.5.",
+        ml_note="Conservative multi-criteria decision making. AND(a,b)=min is the bottleneck "
+                "operation: overall quality = worst quality component. Used in min-max optimisation.",
+        cultural_note="Gödel's original motivation was intermediate logics between intuitionistic "
+                      "and classical. The fuzzy interpretation came later.",
+    )
+
+    # ── 10. MODAL LOGICS ─────────────────────────────────────────────────────
+    # Modal logics extend the value space with world-accessibility.
+    # Here we approximate them in the carrier framework.
+
+    R['modal_k'] = Carrier(
+        id='modal_k', name="Modal Logic K (Basic)",
+        tradition="Western Formal", period="1912 / formalised 1959",
+        origin="C.I. Lewis; Kripke semantics by Kripke (1959)",
+        V=[0.0, 1.0], V_desc="{0,1} extended with accessibility between possible worlds.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # □P = necessarily P = true in ALL accessible worlds
+            # ◇P = possibly P = true in SOME accessible world
+            # These require a world-graph; here we approximate over a flat space
+            'necessarily': lambda v, worlds: min(worlds) if worlds else 0.0,
+            'possibly':    lambda v, worlds: max(worlds) if worlds else 0.0,
+        },
+        parents=['classical'], children=['modal_t','epistemic','deontic','temporal'],
+        key_insight="Truth is relative to possible worlds. □P: P is true everywhere accessible. "
+                    "◇P: P is true somewhere accessible. The accessibility relation defines "
+                    "which logic you get.",
+        ml_note="Counterfactual reasoning. 'What would happen if X were true?' "
+                "Causal inference (Pearl's do-calculus is modal logic). "
+                "Reinforcement learning over possible futures.",
+        cultural_note="Lewis was motivated by strict implication to avoid paradoxes of material "
+                      "implication. Kripke's semantics made it rigorous.",
+    )
+
+    R['modal_s4'] = Carrier(
+        id='modal_s4', name="Modal Logic S4",
+        tradition="Western Formal", period="1930s",
+        origin="C.I. Lewis; axiomatised as S4",
+        V=[0.0, 1.0], V_desc="K + reflexive + transitive accessibility.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Reflexive: every world accesses itself (T axiom)
+            # Transitive: if w1 accesses w2 and w2 accesses w3, w1 accesses w3 (4 axiom)
+            'necessarily': lambda v, worlds: min(worlds) if worlds else 0.0,
+            'possibly':    lambda v, worlds: max(worlds) if worlds else 0.0,
+        },
+        parents=['modal_k'], children=['modal_s5'],
+        key_insight="If P is necessarily true, then it is necessarily necessary (□P → □□P). "
+                    "Knowledge in S4: if you know P, you know that you know P. "
+                    "Topological interpretation: □ is interior operator.",
+        ml_note="Temporal and spatial reasoning. Planning algorithms where past states "
+                "are accessible (reflexive) and transitions compose (transitive).",
+        cultural_note="Corresponds to intuitionistic logic via the Gödel translation: "
+                      "every intuitionistic theorem maps to a modal S4 theorem.",
+    )
+
+    R['modal_s5'] = Carrier(
+        id='modal_s5', name="Modal Logic S5",
+        tradition="Western Formal", period="1930s",
+        origin="C.I. Lewis",
+        V=[0.0, 1.0], V_desc="K + equivalence relation accessibility (reflexive, symmetric, transitive).",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        parents=['modal_s4'], children=[],
+        key_insight="Every world can access every other world. If P is possible, "
+                    "then it is necessarily possible (◇P → □◇P). "
+                    "Standard logic for absolute necessity/possibility.",
+        ml_note="Epistemic reasoning where all agents have equal knowledge access. "
+                "Global properties of distributed systems.",
+        cultural_note="Used in mainstream analytic philosophy of modality. "
+                      "Leibniz's 'possible worlds' semantics.",
+    )
+
+    # ── 11. EPISTEMIC LOGIC ──────────────────────────────────────────────────
+    R['epistemic'] = Carrier(
+        id='epistemic', name="Epistemic Logic",
+        tradition="Western Formal", period="1962",
+        origin="Jaakko Hintikka",
+        V=[0.0, 1.0], V_desc="Modal K with K_i operator: agent i knows P.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            'knows': lambda p, agent_worlds: min(agent_worlds) if agent_worlds else 0.0,
+            'believes': lambda p, belief_worlds: min(belief_worlds) if belief_worlds else 0.0,
+        },
+        parents=['modal_k'], children=[],
+        key_insight="K_i P: agent i knows P. Multi-agent epistemic logic tracks what each "
+                    "agent knows and what each knows about what others know. "
+                    "Common knowledge: everyone knows everyone knows P.",
+        ml_note="Multi-agent AI, game theory, mechanism design. "
+                "Theory of Mind models. Planning under partial observability (POMDPs). "
+                "Explaining AI decisions: does the model 'know' this fact?",
+        cultural_note="Connects to Plato's definition of knowledge as justified true belief. "
+                      "Gettier counterexamples show the carrier for 'knowledge' may need more values.",
+    )
+
+    # ── 12. DEONTIC LOGIC ────────────────────────────────────────────────────
+    R['deontic'] = Carrier(
+        id='deontic', name="Deontic Logic",
+        tradition="Western Formal", period="1951",
+        origin="G.H. von Wright",
+        V=[0.0, 1.0], V_desc="Modal K with O (obligatory), P (permitted), F (forbidden).",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            'obligatory': lambda v: v,           # O(P): P ought to be true
+            'permitted':  lambda v: 1.0 - (1.0-v), # P(P): P is allowed
+            'forbidden':  lambda v: 1.0 - v,     # F(P) = O(NOT P)
+        },
+        parents=['modal_k'], children=[],
+        key_insight="Norms encoded as operators. O(P) ≠ P: just because P is obligatory "
+                    "does not mean P is true. The 'is-ought gap' (Hume) is structural.",
+        ml_note="AI alignment and ethics formalisation. "
+                "Constitutional AI: encoding constraints as deontic operators. "
+                "Legal and regulatory reasoning systems.",
+        cultural_note="Ross's Paradox: 'You ought to mail the letter' implies (in some systems) "
+                      "'You ought to mail the letter or burn it.' Deontic logic must avoid this.",
+    )
+
+    # ── 13. LINEAR LOGIC ─────────────────────────────────────────────────────
+    R['linear'] = Carrier(
+        id='linear', name="Linear Logic",
+        tradition="Western Formal", period="1987",
+        origin="Jean-Yves Girard",
+        V=[0.0, 1.0], V_desc="Classical values, but AND consumes resources.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,  # Multiplicative AND: consumes both
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            'additive_and': lambda a, b: min(a, b),  # Choose one, keep the other
+            'additive_or':  lambda a, b: max(a, b),  # Offer a choice
+            'of_course':    lambda v: v,              # ! = can be used any number of times
+            'why_not':      lambda v: v,              # ? = can be discarded
+        },
+        parents=['classical'], children=[],
+        key_insight="AND requires consuming both inputs. You cannot use a premise twice "
+                    "without explicitly allowing it (using !). Resource sensitivity is "
+                    "built into the logic, not added as a constraint.",
+        ml_note="Rust's borrow checker is linear logic. Memory-safe programming. "
+                "Session types for protocol verification. "
+                "Quantum no-cloning theorem is linear logic in physics.",
+        cultural_note="Girard discovered linear logic by analysing the proof theory of "
+                      "classical logic. It is 'classical logic with memory.'",
+    )
+
+    # ── 14. RELEVANCE LOGIC ──────────────────────────────────────────────────
+    R['relevance'] = Carrier(
+        id='relevance', name="Relevance Logic (Anderson-Belnap)",
+        tradition="Western Formal", period="1975",
+        origin="Alan Ross Anderson, Nuel Belnap",
+        V=[0.0, 1.0], V_desc="Classical values; implication requires relevant connection.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Relevant implication: A -> B only if A is actually used in deriving B
+            # Cannot be expressed as a simple value function; requires proof-theoretic check
+            'relevant_implies': lambda a, b, used: b if (a == 1.0 and used) else (1.0 if a == 0.0 else 0.0),
+        },
+        parents=['classical'], children=[],
+        key_insight="In classical logic, 'If the moon is made of cheese, then 2+2=4' is true "
+                    "(vacuous implication). Relevance logic requires the antecedent to actually "
+                    "contribute to deriving the consequent.",
+        ml_note="Causal reasoning: correlation vs causation. "
+                "Feature attribution in ML: which features are actually relevant to a prediction? "
+                "Conditional independence in Bayesian networks.",
+        cultural_note="Motivated by paradoxes of material implication. Related to "
+                      "counterfactual reasoning in philosophy of science.",
+    )
+
+    # ── 15. QUANTUM LOGIC ────────────────────────────────────────────────────
+    R['quantum'] = Carrier(
+        id='quantum', name="Quantum Logic (Birkhoff-von Neumann)",
+        tradition="Western Formal", period="1936",
+        origin="Garrett Birkhoff, John von Neumann",
+        V=linspace(0.0, 1.0, 51),
+        V_desc="Projective lattice of a Hilbert space. Values are probabilities of outcomes.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,  # Approximate: real quantum AND is non-distributive
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Non-distributive: A AND (B OR C) ≠ (A AND B) OR (A AND C)
+            # This cannot be expressed as a simple scalar formula
+            # The lattice operations on closed subspaces of a Hilbert space
+            'superposition': lambda alpha, v1, v2: abs(alpha)**2 * v1 + abs(1-alpha)**2 * v2,
+        },
+        parents=['classical'], children=[],
+        key_insight="AND is non-distributive over OR: measuring A after measuring B changes "
+                    "the truth value of A. Observables do not commute. "
+                    "The carrier of quantum measurement outcomes is not a Boolean algebra "
+                    "but an orthomodular lattice.",
+        ml_note="Quantum machine learning, quantum neural networks. "
+                "Non-commutative tensor operations. "
+                "Interference effects in language models (quantum cognition hypothesis).",
+        cultural_note="Von Neumann was trying to formalise quantum mechanics mathematically. "
+                      "The resulting logic is radically non-classical but rarely used in "
+                      "engineering quantum systems.",
+    )
+
+    # ── 16. PROBABILISTIC LOGIC (BAYESIAN) ──────────────────────────────────
+    R['probability'] = Carrier(
+        id='probability', name="Probabilistic (Bayesian) Logic",
+        tradition="Western Formal", period="1763 / formalised 1933",
+        origin="Thomas Bayes; Kolmogorov axioms (1933)",
+        V=linspace(0.0, 1.0, 101),
+        V_desc="[0,1]. Values are degrees of belief / frequencies.",
+        designated=[v for v in linspace(0.0,1.0,101) if v > 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,   # Joint probability (independence assumed)
+        or_fn=lambda a, b: a + b - a*b,  # P(A or B) = P(A) + P(B) - P(A and B)
+        theta=1.0,
+        special={
+            # Bayes update: P(H|E) = P(E|H)*P(H)/P(E)
+            'update': lambda prior, likelihood, evidence: (likelihood * prior / evidence) if evidence > 0 else 0.0,
+            # Entropy
+            'entropy': lambda probs: -sum(p * math.log2(p) for p in probs if p > 0),
+        },
+        parents=['classical'], children=['default_logic'],
+        key_insight="AND = P(A)×P(B) for independent events. OR = P(A)+P(B)-P(A AND B). "
+                    "The load of a distribution is its entropy (Shannon). "
+                    "Maximum entropy = maximum load = most uncertain.",
+        ml_note="Foundation of modern machine learning. Bayesian networks, naive Bayes, "
+                "probabilistic graphical models, Gaussian processes, variational inference.",
+        cultural_note="Kolmogorov's axioms are the forced laws of the [0,1] carrier with "
+                      "normalisation. They were not chosen; they follow from the carrier arithmetic.",
+    )
+
+    # ── 17. DEFAULT / NON-MONOTONIC LOGIC ────────────────────────────────────
+    R['default_logic'] = Carrier(
+        id='default_logic', name="Default / Non-Monotonic Logic",
+        tradition="Western Formal", period="1980",
+        origin="Raymond Reiter",
+        V=[0.0, 0.5, 1.0],
+        V_desc="True (1), False (0), Default-assumed (0.5). "
+               "Conclusions can be retracted when new information arrives.",
+        designated=[0.5, 1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Default rule: in the absence of evidence to the contrary, assume X
+            'default': lambda v, exception_present: v if not exception_present else 0.0,
+        },
+        parents=['probability'], children=[],
+        key_insight="Reasoning is normally monotonic (adding premises never removes conclusions). "
+                    "Default logic is non-monotonic: 'birds fly' can be retracted for 'Tweety is a penguin'. "
+                    "The carrier includes a 'defeasible' value for default assumptions.",
+        ml_note="Commonsense reasoning in AI. Expert systems with exceptions. "
+                "Belief revision. The mechanism behind 'fine-tuning vs forgetting' in neural nets.",
+        cultural_note="Classical formal logic could not handle commonsense reasoning "
+                      "where general rules have exceptions. Default logic was AI's response.",
+    )
+
+    # ── 18. DESCRIPTION LOGIC (DL) ───────────────────────────────────────────
+    R['description_logic'] = Carrier(
+        id='description_logic', name="Description Logic (OWL/DL)",
+        tradition="Western Formal", period="1991",
+        origin="Developed from KL-ONE by Brachman, Levesque, and others",
+        V=[0.0, 1.0], V_desc="Classical {0,1}. Structured into concepts, roles, and individuals.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # SubClassOf: if X is_a A, then X is_a B
+            'subsumption': lambda sub_val, super_val: min(sub_val, 1.0 - super_val + sub_val),
+            # ∃R.C: there exists a related individual in class C
+            'existential': lambda role_val, class_val: min(role_val, class_val),
+            # ∀R.C: all related individuals are in class C
+            'universal':   lambda role_vals: min(role_vals) if role_vals else 1.0,
+        },
+        parents=['classical'], children=[],
+        key_insight="Classical logic structured into concept hierarchies. "
+                    "Subsumption reasoning: is 'Labrador' a subclass of 'Dog'? "
+                    "Underpins OWL, the Semantic Web, and knowledge graphs.",
+        ml_note="Knowledge graphs (Wikidata, Freebase, DBpedia). "
+                "Entity classification in NLP. Ontology-guided ML. "
+                "The W3C Web Ontology Language (OWL) is grounded in DL.",
+        cultural_note="Designed to balance expressivity and decidability. "
+                      "The more expressive the DL, the more expensive the reasoning.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # INDIAN TRADITIONS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 19. NYĀYA LOGIC ──────────────────────────────────────────────────────
+    R['nyaya'] = Carrier(
+        id='nyaya', name="Nyāya Logic (Classical Indian Logic)",
+        tradition="Indian Classical", period="~-200 (formalised ~600 CE)",
+        origin="Gautama Akṣapāda (Nyāya Sūtra); later Dignāga and Dharmakīrti",
+        V=[0.0, 1.0],
+        V_desc="Valid/invalid for inferences. Extended by vyāpti (pervasion/invariable concomitance).",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Vyāpti: invariable concomitance between hetu (reason) and sādhya (conclusion)
+            # If smoke always accompanies fire, vyāpti(smoke, fire) = 1
+            'vyapti': lambda hetu_present, sadhya_present: min(hetu_present, sadhya_present),
+            # Five-member syllogism:
+            # 1. Pratijna (thesis): the hill has fire
+            # 2. Hetu (reason): because it has smoke
+            # 3. Udāharana (example): wherever there is smoke, there is fire, like a kitchen
+            # 4. Upanaya (application): this hill has smoke
+            # 5. Nigamana (conclusion): therefore, this hill has fire
+            'five_member': lambda thesis, reason, example, application: min(reason, example, application),
+        },
+        parents=[], children=['navya_nyaya'],
+        key_insight="Inference requires example (dṛṣṭānta): you must point to a known case. "
+                    "The five-member syllogism is empirically grounded in a way Aristotelian "
+                    "syllogistic is not. Vyāpti (pervasion) is the Indian analogue of "
+                    "material implication but requires observed co-occurrence.",
+        ml_note="Case-based reasoning. The 'kitchen fire' example is a training data point. "
+                "Nyāya logic is proto-inductive: inference always requires empirical grounding. "
+                "The requirement for examples anticipates k-NN reasoning.",
+        cultural_note="Developed as epistemology (pramāṇa theory) rather than pure logic. "
+                      "Four valid sources of knowledge: perception, inference, comparison, testimony. "
+                      "Dignāga (5th c.) created a more formal binary logic within this tradition.",
+    )
+
+    # ── 20. NAVYA-NYĀYA ──────────────────────────────────────────────────────
+    R['navya_nyaya'] = Carrier(
+        id='navya_nyaya', name="Navya-Nyāya (New Logic)",
+        tradition="Indian Classical", period="~1100",
+        origin="Gaṅgeśa Upādhyāya",
+        V=[0.0, 1.0], V_desc="Binary, but with a sophisticated formal notation for relations.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Technical notion: avacchedaka (limitor/delimitor)
+            # Qualifies the scope of a property
+            # pot-ness limited-by-brownness = brown pot
+            'limitor': lambda property_val, limitor_val: property_val * limitor_val,
+        },
+        parents=['nyaya'], children=[],
+        key_insight="Developed an elaborate notation for complex intentional contents. "
+                    "A pot's brownness is a brownness-qualified-by-pot-ness. "
+                    "This is essentially type-theoretic: properties carry their scope.",
+        ml_note="Early natural language semantics. Navya-Nyāya notation influenced "
+                "modern formal semantics via Frits Staal's work. "
+                "Structured predication before formal semantics existed in the West.",
+        cultural_note="The most technically sophisticated pre-modern logical tradition. "
+                      "Matilal argued it anticipates Frege's logic by 600 years.",
+    )
+
+    # ── 21. JAIN LOGIC (SYĀDVĀDA) ────────────────────────────────────────────
+    # The seven-fold predication (saptabhaṅgī)
+    V_jain = [0.0, 1/7, 2/7, 3/7, 4/7, 5/7, 6/7, 1.0]  # 8 approximated positions
+    R['jain_syadvada'] = Carrier(
+        id='jain_syadvada', name="Jain Syādvāda (Seven-fold Predication)",
+        tradition="Indian Classical", period="~-599 (Mahāvīra)",
+        origin="Mahāvīra; Jain philosophical tradition",
+        V=V_jain,
+        V_desc="Seven predicates: (1) exists, (2) not-exists, (3) both, (4) inexpressible, "
+               "(5) exists+inexpressible, (6) not-exists+inexpressible, (7) both+inexpressible. "
+               "Every predicate is prefixed with 'syāt' (in some respect).",
+        designated=[v for v in V_jain if v >= 0.5],
+        not_fn=lambda v: 1.0 - v if v <= 1.0 else 0.0,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Syāt prefix: every predication is perspectival, not absolute
+            'syat': lambda v, perspective: v,  # Value is true from perspective
+            # Avaktavya: inexpressible - cannot be expressed simultaneously
+            'avaktavya': lambda v: 0.5 if v == 0.5 else v,
+        },
+        parents=[], children=[],
+        key_insight="Every claim is 'in some respect' (syāt). Reality is many-sided (anekāntavāda). "
+                    "The seven predicates capture: existence, non-existence, both (contradictory), "
+                    "inexpressibility, and combinations with inexpressibility. "
+                    "No single perspective captures the whole truth.",
+        ml_note="Multi-perspective prediction ensembles. "
+                "The 'inexpressible' category is the out-of-distribution signal: "
+                "when no training perspective covers the case. "
+                "Seven-fold = a formal taxonomy of epistemic states including OOD.",
+        cultural_note="Anekāntavāda (non-one-sidedness) was Jain's response to competing "
+                      "philosophical schools. Every system sees part of reality. None sees all. "
+                      "The 'syāt' prefix is a humility operator built into every assertion.",
+    )
+
+    # ── 22. BUDDHIST CATUṢKOṬI (TETRALEMMA) ─────────────────────────────────
+    R['catuskoti'] = Carrier(
+        id='catuskoti', name="Buddhist Catuṣkoṭi (Tetralemma / Madhyamaka)",
+        tradition="Indian Buddhist", period="~-200 (Nāgārjuna ~150 CE)",
+        origin="Nāgārjuna's Mūlamadhyamakakārikā",
+        V=[0.0, 0.33, 0.67, 1.0],
+        V_desc="Four positions: (1) IS (1.0), (2) IS NOT (0.0), "
+               "(3) BOTH IS and IS NOT (0.67), (4) NEITHER IS nor IS NOT (0.33). "
+               "Nāgārjuna rejects all four for the ultimate level of analysis.",
+        designated=[1.0],  # Only 'IS' is designated at conventional level
+        not_fn=lambda v: {0.0: 1.0, 0.33: 0.67, 0.67: 0.33, 1.0: 0.0}.get(round(v,2), 1.0-v),
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # At the ultimate level, ALL four positions are rejected (śūnyatā: emptiness)
+            # This is a meta-operation on the carrier itself
+            'ultimate_rejection': lambda v: None,  # No value assigned at ultimate level
+        },
+        parents=[], children=['dialethism'],
+        key_insight="At the conventional level: four truth values. "
+                    "At the ultimate level: Nāgārjuna rejects all four. "
+                    "The ultimate claim is that the carrier itself is empty of inherent existence. "
+                    "This is not paradox but the pointing-beyond of conceptual categorisation.",
+        ml_note="Four-class uncertainty quantification: positive, negative, conflicting evidence, "
+                "insufficient evidence. Maps directly to Belnap's FOUR. "
+                "The 'ultimate rejection' = the out-of-distribution case where the question "
+                "does not apply at all.",
+        cultural_note="Nāgārjuna's argument is that all conceptual distinctions (including this "
+                      "four-fold one) are ultimately conventional (prajñapti). "
+                      "The tetralemma is a ladder to be kicked away, not a system to be maintained. "
+                      "This is a profound difference from formal logic, which takes its own "
+                      "distinctions as real.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # CHINESE TRADITIONS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 23. DAOIST LOGIC (ANTI-REIFICATION) ──────────────────────────────────
+    # "The Dao that can be named is not the eternal Dao"
+    # This is not a logic in the Western sense but has a precise carrier formulation.
+    R['daoist'] = Carrier(
+        id='daoist', name="Daoist Logic (Tao Te Ching / Laozi)",
+        tradition="Chinese Classical", period="~-400",
+        origin="Laozi (attributed); Zhuangzi (develops)",
+        V=[0.0, 0.5, 1.0, float('inf')],
+        V_desc="Named-false (0), Named-partial (0.5), Named-true (1), Unnameable-process (∞). "
+               "The value ∞ represents the Dao as living process, prior to all naming.",
+        designated=[1.0, float('inf')],
+        not_fn=lambda v: (1.0 - v) if v != float('inf') else float('inf'),
+        and_fn=lambda a, b: min(a if a != float('inf') else 1.0,
+                                 b if b != float('inf') else 1.0),
+        or_fn=lambda a, b: max(a if a != float('inf') else 1.0,
+                                b if b != float('inf') else 1.0),
+        theta=float('inf'),  # The Dao has no threshold
+        special={
+            # Reification (naming): maps the process to a named value
+            # This is a LOSSY operation: NOT(naming(∞)) = 0.5 (partial truth)
+            'name': lambda v: 0.5 if v == float('inf') else v,
+            # De-reification: acknowledge the limit of any named thing
+            'de_reify': lambda v: float('inf') if v != 0.0 else 0.0,
+            # Wu wei: non-action, allowing the process to proceed
+            'wu_wei': lambda v: float('inf'),
+        },
+        parents=[], children=[],
+        key_insight="The V contains a special value (∞) representing the process that precedes "
+                    "all distinctions. The 'naming' operation is irreversible: "
+                    "name(∞) = 0.5 (you get a partial truth, never the whole process). "
+                    "Every named thing has a corresponding distinction debt. "
+                    "The Dao is the carrier of all carriers, prior to all V.",
+        ml_note="DRAS and regularisation. The 'true Dao' = the underlying data-generating process. "
+                "The named Dao = the model. Every model is an approximation. "
+                "Overfitting = excessive naming. Regularisation = wu wei (reducing reification). "
+                "The distinction debt of Chapter 6 IS the Daoist naming cost.",
+        cultural_note="The Tao Te Ching opens: '道可道，非常道' (The Dao that can be Dao-ed "
+                      "is not the eternal Dao). 名可名，非常名 (The name that can be named "
+                      "is not the eternal name). This is not mysticism. It is a precise claim "
+                      "about the limits of formal systems — what Russell's paradox later "
+                      "discovered formally. Zhuangzi extends this to language as a whole: "
+                      "all distinctions are conventional, including 'this' and 'not-this'.",
+    )
+
+    # ── 24. MOHIST LOGIC ─────────────────────────────────────────────────────
+    R['mohist'] = Carrier(
+        id='mohist', name="Mohist Logic (墨辯)",
+        tradition="Chinese Classical", period="~-400",
+        origin="Mozi and the Mohist school",
+        V=[0.0, 1.0], V_desc="Binary: ox/non-ox. Hard boundaries around kinds.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # 辯 (bian): debating by distinguishing kinds
+            # Is this an ox? Test: does it pass the ox criteria?
+            'bian': lambda criteria_vals: min(criteria_vals) if criteria_vals else 0.0,
+        },
+        parents=[], children=[],
+        key_insight="Mohists developed explicit rules for disputation (bian): "
+                    "two people cannot both be right when they contradict each other. "
+                    "Classification by kind (lei): ox/non-ox is crisp, not graded. "
+                    "Closest to classical binary logic in the Chinese tradition.",
+        ml_note="Binary classification by categorical criteria. "
+                "Rule-based expert systems. Nearest to Western Boolean logic.",
+        cultural_note="The Mohists were largely forgotten after ~200 BCE. "
+                      "Their logic was rediscovered in the 20th century. "
+                      "Contemporary with Aristotle but developed independently.",
+    )
+
+    # ── 25. SCHOOL OF NAMES (名家) ──────────────────────────────────────────
+    R['school_of_names'] = Carrier(
+        id='school_of_names', name="School of Names (Gongsun Long / Huishi)",
+        tradition="Chinese Classical", period="~-300",
+        origin="Gongsun Long, Huishi",
+        V=[0.0, 0.5, 1.0],
+        V_desc="A white horse is not a horse (名). Names and their referents are distinct. "
+               "The third value captures the gap between name and reality.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # The famous paradox: 'a white horse is not a horse'
+            # 'horse' names the form; 'white horse' names form + colour
+            # They are different names, therefore different referents
+            'rectification_of_names': lambda name_val, referent_val: min(name_val, referent_val),
+        },
+        parents=[], children=[],
+        key_insight="Gongsun Long's paradox: a white horse is not a horse, "
+                    "because 'horse' names the form and 'white horse' names both form and colour. "
+                    "This is not sophistry — it is a precise point about the gap between "
+                    "linguistic types and their instantiations. "
+                    "The third value (0.5) captures the partial identity.",
+        ml_note="Type theory and inheritance in OOP. "
+                "The 'white horse is not a horse' problem = the Liskov substitution principle. "
+                "Class hierarchies and type covariance/contravariance.",
+        cultural_note="Confucius had already noted the 'rectification of names' (zhengming): "
+                      "names should correspond to reality. Gongsun Long pushed this formally. "
+                      "Often dismissed as sophism, now recognised as genuine logical work.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # AFRICAN TRADITIONS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 26. UBUNTU RELATIONAL LOGIC ──────────────────────────────────────────
+    R['ubuntu'] = Carrier(
+        id='ubuntu', name="Ubuntu Relational Logic",
+        tradition="African (Bantu, Southern/East African)",
+        period="pre-colonial; articulated philosophically 20th century",
+        origin="Bantu philosophical tradition; articulated by Mbiti, Gyekye, Tutu",
+        V=[0.0, 0.5, 1.0],
+        V_desc="A proposition's truth value is relational: it depends on the community of "
+               "relations in which it is embedded. Isolated truth = 0.5 (incomplete). "
+               "Relational truth = 1 or 0. 'I am because we are.'",
+        designated=[0.5, 1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: (a * b + min(a,b)) / 2,  # Relational AND: more than just product
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Ubuntu AND: truth of combined claim is boosted by relational coherence
+            # If a and b come from the same relational community, their AND is stronger
+            'ubuntu_and': lambda a, b, relational_coherence: a * b + relational_coherence * min(a,b),
+            # A claim without relational grounding is only 'half true'
+            'isolated': lambda v: v * 0.5,  # Isolated claim loses half its truth-value
+            # Community validation: a claim gains truth from communal recognition
+            'community': lambda v, recognitions: min(1.0, v + 0.1 * recognitions),
+        },
+        parents=[], children=[],
+        key_insight="The subject-predicate logic of the form 'X is Y' is insufficient. "
+                    "A proposition's truth is not intrinsic to the subject. "
+                    "It is a function of relational context: who is asserting, to whom, "
+                    "in what community, with what shared history. "
+                    "Personhood itself is relational: umuntu ngumuntu ngabantu "
+                    "(a person is a person through other persons).",
+        ml_note="Graph Neural Networks (GNNs) implement Ubuntu logic structurally: "
+                "a node's representation is a function of its relational neighbourhood. "
+                "Social network analysis. Contextual word embeddings (BERT, GPT) "
+                "where meaning is relational, not intrinsic. "
+                "Federated learning as communal knowledge construction.",
+        cultural_note="Ubuntu is a lived ethical-ontological framework, not a formal logic. "
+                      "The carrier formulation captures one structural feature: "
+                      "truth-value as relational rather than intrinsic. "
+                      "Ubuntu cannot be reduced to this without losing its ethical core. "
+                      "Desmond Tutu: 'My humanity is bound up in yours, for we can only "
+                      "be human together.'",
+    )
+
+    # ── 27. IFÁ DIVINATION SYSTEM (YORUBA) ──────────────────────────────────
+    # Ifá uses a binary encoding of 256 odù (sacred texts/patterns)
+    # This is a formal combinatorial system with precise arithmetic
+    R['ifa'] = Carrier(
+        id='ifa', name="Ifá Divination System (Yoruba)",
+        tradition="African (Yoruba, West Africa)",
+        period="~1000 CE formalised; older oral tradition",
+        origin="Yoruba religious-philosophical tradition; Orunmila as divine patron",
+        V=list(range(256)),
+        V_desc="256 odù: each is a pair of 4-mark columns. "
+               "Each column is either single-mark (odd, 1) or double-mark (even, 0). "
+               "4 binary positions × 2 columns = 8 bits = 256 combinations. "
+               "Each odù has associated verses, prohibitions, and prescriptions.",
+        designated=list(range(16, 240)),  # The 'active' odù (simplified)
+        not_fn=lambda v: 255 - v,  # Bitwise complement (approximate)
+        and_fn=lambda a, b: a & b,  # Bitwise AND
+        or_fn=lambda a, b: a | b,   # Bitwise OR
+        theta=256.0,
+        special={
+            # The casting operation: four palm nuts cast 8 times produces an odù
+            # This is a random sampling of the 256-dimensional space
+            'cast': lambda random_bits: sum(b << i for i, b in enumerate(random_bits[:8])),
+            # Odù lookup: maps an odù to its associated guidance (here: symbolic pointer)
+            'lookup': lambda odu_id: f"Odù {odu_id}: see Ifá corpus verse {odu_id}",
+        },
+        parents=[], children=[],
+        key_insight="Ifá is a binary combinatorial system encoding 256 archetypes. "
+                    "The 'logic' is not propositional but pattern-matching: "
+                    "a situation is classified by its odù, which then provides guidance. "
+                    "This is 8-bit encoding, developed independently of Western binary arithmetic. "
+                    "Each odù = a category in a 256-dimensional classification space.",
+        ml_note="Ifá is a case-based reasoning system: classify the situation (odù), "
+                "retrieve the relevant verse (knowledge base lookup). "
+                "Binary encoding: the same information-theoretic foundation as digital computing. "
+                "The 256 odù = a 256-class classifier over life situations. "
+                "Procedurally similar to nearest-neighbour lookup in high-dimensional space.",
+        cultural_note="UNESCO inscribed Ifá on the Representative List of Intangible Cultural Heritage. "
+                      "The Ifá corpus is one of the largest oral knowledge systems ever created. "
+                      "The binary encoding was NOT derived from Western mathematics; it is "
+                      "an independent discovery of binary representation. "
+                      "The 'logic' here is the structural fact of binary encoding; "
+                      "the philosophical content of Ifá is vastly richer.",
+    )
+
+    # ── 28. BANTU VITAL FORCE LOGIC ──────────────────────────────────────────
+    R['bantu_vital_force'] = Carrier(
+        id='bantu_vital_force', name="Bantu Vital Force (Ntu) Ontology",
+        tradition="African (Bantu, Central Africa)",
+        period="pre-colonial; articulated by Tempels (1945)",
+        origin="Bantu philosophical tradition; Placide Tempels",
+        V=linspace(0.0, 1.0, 11),
+        V_desc="[0,1]: degree of vital force (ntu). "
+               "Entities are not binary present/absent but have degrees of force/existence. "
+               "All existence is a gradient of vital energy.",
+        designated=[v for v in linspace(0.0,1.0,11) if v >= 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Increase of vital force: good acts, community, medicine increase ntu
+            'augment': lambda v, amount: min(1.0, v + amount),
+            # Decrease of vital force: isolation, illness, bad acts decrease ntu
+            'diminish': lambda v, amount: max(0.0, v - amount),
+        },
+        parents=[], children=[],
+        key_insight="Existence is not binary but a scalar vital force. "
+                    "The stronger the vital force, the more fully something 'is'. "
+                    "Logic in this framework is about augmentation and diminishment of being, "
+                    "not just true/false classification.",
+        ml_note="Continuous health/energy metrics in biomedical ML. "
+                "Degree-based entity salience in knowledge graphs. "
+                "The vital force gradient maps to feature activation magnitude in neural networks.",
+        cultural_note="Tempels' 1945 work is controversial (colonial framing). "
+                      "Later African philosophers (Kagame, Mbiti) developed more nuanced accounts. "
+                      "The key structural feature — existence as degree, not binary — is genuine "
+                      "and important, regardless of Tempels' framing.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # INDIGENOUS AMERICAN TRADITIONS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 29. LAKOTA RELATIONAL ONTOLOGY ───────────────────────────────────────
+    R['lakota'] = Carrier(
+        id='lakota', name="Lakota Relational Ontology",
+        tradition="Indigenous American (Lakota/Sioux, Northern Great Plains)",
+        period="traditional; articulated philosophically 20th century",
+        origin="Lakota oral tradition; Vine Deloria Jr., Black Elk, Lyons",
+        V=linspace(0.0, 1.0, 11),
+        V_desc="A proposition's truth value is its relational coherence within the web of "
+               "'all my relations' (mitakuye oyasin). Truth is not correspondence to isolated fact "
+               "but harmony within the relational whole. "
+               "Range [0,1]: degree of relational coherence.",
+        designated=[v for v in linspace(0.0,1.0,11) if v >= 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Mitakuye oyasin: degree of relational alignment
+            # A claim that aligns with the relational whole has higher truth value
+            'mitakuye_oyasin': lambda claim_val, relational_harmony: claim_val * relational_harmony,
+            # The four directions: each perspective contributes to truth
+            'four_directions': lambda north, south, east, west: (north + south + east + west) / 4,
+        },
+        parents=[], children=[],
+        key_insight="Truth is not correspondence between a proposition and an isolated fact. "
+                    "It is coherence within the relational whole. "
+                    "A claim that damages relations is 'less true' even if factually accurate. "
+                    "The medicine wheel (four directions) = a four-perspective aggregation operator.",
+        ml_note="Relational learning, GNNs, and ecological/systems ML. "
+                "The 'relational coherence' criterion matches multi-objective optimisation: "
+                "a solution is better if it is more harmonious across all dimensions. "
+                "Pareto optimality as mitakuye oyasin in multi-stakeholder systems.",
+        cultural_note="Mitakuye oyasin is a Lakota prayer meaning 'all my relations.' "
+                      "It names a relational ontology: human, animal, plant, stone, star — "
+                      "all are related and the right relationship is the measure of truth and good action. "
+                      "This is NOT simply 'nature is good.' It is a formal claim about "
+                      "the structure of truth: truth is inherently relational.",
+    )
+
+    # ── 30. HOPI TEMPORAL GRADIENCE ──────────────────────────────────────────
+    R['hopi'] = Carrier(
+        id='hopi', name="Hopi Temporal Logic",
+        tradition="Indigenous American (Hopi, Southwest USA)",
+        period="traditional; Whorf's analysis 1930s-40s",
+        origin="Hopi oral tradition; Benjamin Lee Whorf (linguistic analysis)",
+        V=[0.0, 0.25, 0.5, 0.75, 1.0],
+        V_desc="Not past/present/future but degrees of manifestation: "
+               "0 = unmanifest (potential), 0.25 = becoming, 0.5 = emerging, "
+               "0.75 = manifest-declining, 1.0 = fully manifest. "
+               "Time is not linear segmentation but gradient actualisation.",
+        designated=[0.5, 0.75, 1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Manifestation operator: moves a proposition toward actuality
+            'manifest': lambda v: min(1.0, v + 0.25),
+            # Dissolution operator: moves toward unmanifest
+            'dissolve': lambda v: max(0.0, v - 0.25),
+        },
+        parents=[], children=[],
+        key_insight="Temporal propositions are not 'happened / happening / will happen' "
+                    "(tense-based, requiring a fixed now) but degrees of manifestation "
+                    "on a continuous scale from potential to actual. "
+                    "This dissolves the 'present moment' as a special value. "
+                    "All events are on the same manifestation gradient.",
+        ml_note="Bayesian temporal inference without a fixed present. "
+                "Temporal attention mechanisms. "
+                "The manifestation gradient = a probability distribution over event-time. "
+                "Process models rather than snapshot models.",
+        cultural_note="Whorf's analysis of Hopi has been debated by linguists. "
+                      "The carrier formulation does not depend on Whorf's specific claims "
+                      "but on the structural feature: a gradient of actualisation "
+                      "rather than a tense partition. "
+                      "Whether this is 'what the Hopi believe' is a separate and careful question.",
+    )
+
+    # ── 31. NAHUATL NEPANTLA LOGIC ───────────────────────────────────────────
+    R['nahuatl_nepantla'] = Carrier(
+        id='nahuatl_nepantla', name="Nahuatl Nepantla (In-Between) Logic",
+        tradition="Indigenous American (Nahuatl/Aztec, Mesoamerica)",
+        period="pre-colonial; articulated philosophically by Anzaldúa (1987)",
+        origin="Nahuatl tradition; Gloria Anzaldúa's philosophical development",
+        V=[0.0, 0.5, 1.0],
+        V_desc="Nepantla = the in-between. The third value is not a failure to decide "
+               "but an ontologically real position: the borderland, the threshold, "
+               "the space of transformation between states.",
+        designated=[0.5, 1.0],  # The in-between IS a valid position
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # Nepantla: the transformative in-between state
+            # Things in nepantla are actively transforming, not merely ambiguous
+            'nepantla': lambda v: 0.5,  # Maps to the in-between value
+            # Coatlicue state: chaos before transformation (can't yet be classified)
+            'coatlicue': lambda v: 0.0 if v < 0.3 else (0.5 if v < 0.7 else 1.0),
+        },
+        parents=[], children=[],
+        key_insight="The in-between (nepantla) is not a failure of binary logic but a "
+                    "positive ontological state: the space of transformation. "
+                    "This differs from paraconsistent logic (where 0.5 = contradiction) "
+                    "and from fuzzy logic (where 0.5 = partial membership). "
+                    "Nepantla = actively becoming, neither one thing nor another yet.",
+        ml_note="Transfer learning and domain adaptation: the model is in nepantla "
+                "between source and target domain. "
+                "Liminal states in time-series: the transition between regimes. "
+                "Concept drift detection: the moment when the distribution is actively shifting.",
+        cultural_note="Anzaldúa used nepantla to describe the Borderlands experience — "
+                      "living between cultures. Her philosophical work shows that "
+                      "the in-between is not a deficiency but a generative position. "
+                      "The Aztec deity Coatlicue embodies the chaos before creation. "
+                      "Transformation requires passing through the in-between.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # ANCIENT AND OTHER TRADITIONS
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 32. EGYPTIAN MA'AT LOGIC ─────────────────────────────────────────────
+    R['maat'] = Carrier(
+        id='maat', name="Egyptian Ma'at (Order/Truth/Justice)",
+        tradition="Ancient Egyptian", period="~-3000",
+        origin="Ancient Egyptian civilisation; Thoth as divine patron of logic",
+        V=linspace(0.0, 1.0, 11),
+        V_desc="Ma'at = the degree of cosmic-social harmony. "
+               "Not a binary true/false but a scalar of alignment with ma'at. "
+               "The feather weighing: a heart measured against the feather of ma'at.",
+        designated=[v for v in linspace(0.0,1.0,11) if v >= 0.6],  # Must exceed feather
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # The Weighing of the Heart: heart must not exceed the feather's weight
+            'weighing': lambda heart_load, feather_load: 1.0 if heart_load <= feather_load else 0.0,
+            # Isfet: disorder/untruth/injustice — the complement of Ma'at
+            'isfet': lambda v: 1.0 - v,
+        },
+        parents=[], children=[],
+        key_insight="Truth, justice, and cosmic order are the same concept (ma'at). "
+                    "Epistemology, ethics, and cosmology are not separated. "
+                    "The load metaphor is literal: the heart is weighed against a feather. "
+                    "A heavy heart (laden with wrongdoing = high load) fails. "
+                    "This is Landauer's principle 4,000 years early.",
+        ml_note="Multi-objective alignment: truth, fairness, and order as a combined loss. "
+                "Bias detection: a biased model has high isfet (disorder). "
+                "Fairness in ML = alignment with ma'at across groups.",
+        cultural_note="Ma'at is both a concept and a goddess. She represents the principle "
+                      "that the cosmos operates by natural order that can be aligned with or violated. "
+                      "The judge in the afterlife trial was Osiris, with Thoth as scribe. "
+                      "The heart of the deceased was weighed against the feather of Ma'at. "
+                      "If heavier (too much wrongdoing = too much load), it was devoured.",
+    )
+
+    # ── 33. HERACLITEAN PROCESS LOGIC ────────────────────────────────────────
+    R['heraclitean'] = Carrier(
+        id='heraclitean', name="Heraclitean Process Logic",
+        tradition="Ancient Greek (Pre-Socratic)", period="~-500",
+        origin="Heraclitus of Ephesus",
+        V=[0.0, 0.5, 1.0],
+        V_desc="All things are in flux. The third value (0.5) is the primary state: "
+               "everything is always in the process of becoming. "
+               "Pure 0 and pure 1 are instantaneous limits, not stable states.",
+        designated=[0.5, 1.0],  # Flux is the normal condition
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: min(a, b),
+        or_fn=lambda a, b: max(a, b),
+        theta=float('inf'),  # No threshold: all processes are coherent
+        special={
+            # The river: you cannot step into the same river twice
+            # Identity is always-already in process
+            'flux': lambda v, t: (v + 0.1 * t) % 1.0,  # Value drifts with time
+            # Unity of opposites: cold things become warm; warm things become cold
+            'logos': lambda v: 1.0 - v,  # The underlying unity of opposites
+        },
+        parents=[], children=['classical'],  # Aristotle reacted against Heraclitean flux
+        key_insight="The primary state of any proposition is processual (0.5 = in flux). "
+                    "Stable 0 and stable 1 are approximations. "
+                    "The logos (underlying order) is that opposites are unified: "
+                    "the road up and the road down are the same road. "
+                    "Classical logic froze the process into snapshot values.",
+        ml_note="Continuous learning and concept drift. "
+                "Time-series models where states are processes, not points. "
+                "The Heraclitean insight: the model trained yesterday is a snapshot "
+                "of a process that has already moved on.",
+        cultural_note="Aristotle explicitly rejected Heraclitean flux in his formulation "
+                      "of LNC. If things are always changing, how can anything be "
+                      "determinately true? Aristotle's answer (LNC) is the historical fork: "
+                      "classical logic chose snapshot stability over process fidelity.",
+    )
+
+    # ── 34. ARISTOTELIAN SYLLOGISTIC (pre-Boolean) ──────────────────────────
+    R['aristotelian'] = Carrier(
+        id='aristotelian', name="Aristotelian Syllogistic",
+        tradition="Ancient Greek", period="~-350",
+        origin="Aristotle (Organon)",
+        V=[0.0, 1.0], V_desc="Subject-predicate propositions: All/Some S is/is-not P.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # The four proposition types:
+            'universal_affirmative':  lambda s, p: min(s, p),      # All S is P
+            'universal_negative':     lambda s, p: min(s, 1.0-p),  # No S is P
+            'particular_affirmative': lambda s, p: s * p,           # Some S is P
+            'particular_negative':    lambda s, p: s * (1.0-p),    # Some S is not P
+            # Barbara (the most famous syllogism): All M is P. All S is M. Therefore All S is P.
+            'barbara': lambda s_m, m_p: min(s_m, m_p),
+        },
+        parents=['heraclitean'], children=['classical'],
+        key_insight="Not propositional logic but term logic: reasoning about "
+                    "relationships between categories. Barbara syllogism: "
+                    "All humans are mortal / Socrates is human / Socrates is mortal. "
+                    "The carrier is over category memberships, not propositions.",
+        ml_note="Ontological classification hierarchies. "
+                "Syllogistic = transitive closure reasoning over class membership. "
+                "All S is M AND All M is P → All S is P: this is matrix multiplication "
+                "in the {0,1} adjacency matrix of the category graph.",
+        cultural_note="Dominant in Western philosophy for 2,000 years. "
+                      "Frege showed it was expressively weaker than first-order logic (1879). "
+                      "Boole showed it could be algebraicised (1847).",
+    )
+
+    # ── 35. TEMPORAL LOGIC (LTL) ─────────────────────────────────────────────
+    R['temporal_ltl'] = Carrier(
+        id='temporal_ltl', name="Linear Temporal Logic (LTL)",
+        tradition="Western Formal", period="1977",
+        origin="Amir Pnueli",
+        V=[0.0, 1.0],
+        V_desc="Classical {0,1} extended with temporal operators over infinite time sequences.",
+        designated=[1.0],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            # G (globally): true at all future time points
+            'globally':     lambda time_series: float(all(v == 1.0 for v in time_series)),
+            # F (finally): true at some future time point
+            'finally':      lambda time_series: float(any(v == 1.0 for v in time_series)),
+            # X (next): true at the next time point
+            'next':         lambda time_series, t: time_series[t+1] if t+1 < len(time_series) else 0.0,
+            # U (until): P is true until Q becomes true
+            'until':        lambda P_series, Q_series: float(any(
+                Q_series[i] == 1.0 and all(P_series[j] == 1.0 for j in range(i))
+                for i in range(len(Q_series)))),
+        },
+        parents=['modal_k'], children=[],
+        key_insight="Temporal properties of reactive systems: safety (G: nothing bad ever happens), "
+                    "liveness (F: something good eventually happens), and response (P U Q). "
+                    "The carrier is over computation paths, not individual states.",
+        ml_note="Formal verification of ML systems. "
+                "Specification of safety constraints: G(speed < 100). "
+                "Reinforcement learning reward shaping with temporal structure. "
+                "Monitoring deployed models with temporal specifications.",
+        cultural_note="Pnueli won the Turing Award for introducing temporal logic to "
+                      "computer science. Now standard in hardware verification.",
+    )
+
+    # ══════════════════════════════════════════════════════════════════════════
+    # ML-NATIVE CARRIER (for reference)
+    # ══════════════════════════════════════════════════════════════════════════
+
+    # ── 36. CONTINUOUS PROPAGATION LOGIC (DRAS CARRIER) ─────────────────────
+    R['pl_dras'] = Carrier(
+        id='pl_dras', name="Propagation Logic DRAS Carrier",
+        tradition="Propagation Logic Project", period="2026",
+        origin="James Alexander Pugmire",
+        V=linspace(0.0, 1.0, 1001),
+        V_desc="[0,1] continuous with load tracking. Every pattern P = (value, load). "
+               "Load = thermodynamic cost of maintaining the distinction. "
+               "Threshold theta = maximum coherent load.",
+        designated=[v for v in linspace(0.0,1.0,1001) if v > 0.5],
+        not_fn=lambda v: 1.0 - v,
+        and_fn=lambda a, b: a * b,
+        or_fn=lambda a, b: max(a, b),
+        theta=1.0,
+        special={
+            'pat_not':  lambda v, L:         (1.0-v, L),
+            'pat_and':  lambda v1,L1,v2,L2:  (v1*v2, L1+L2),
+            'pat_or':   lambda v1,L1,v2,L2:  (max(v1,v2), min(L1,L2)),
+            'coherent': lambda v, L, theta:  L <= theta,
+        },
+        parents=['fuzzy_product','probability'], children=[],
+        key_insight="The unified carrier: every known formal system is P/G→Q on a specific V. "
+                    "Load tracks the thermodynamic cost of each distinction. "
+                    "DRAS: every quantity carries its history. No bare constants.",
+        ml_note="Foundation for the communal field ML architecture (pl_communal_field.py). "
+                "Gradient classification (SYMBIOTIC/NEUTRAL/PARASITIC). "
+                "Endosymbiosis detection via pool similarity. "
+                "Any ML system that tracks uncertainty is implicitly using this carrier.",
+        cultural_note="The claim: all of the carriers in this archive are special cases "
+                      "of P/G→Q with different choices of V, Γ, and θ. "
+                      "This is falsifiable: produce a carrier that cannot be expressed this way.",
+    )
+
+    return R
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# BUILD AND EXPORT
+# ══════════════════════════════════════════════════════════════════════════════
+
+REGISTRY = _build_registry()
+
+
+def print_all():
+    for carrier_id, c in REGISTRY.items():
+        laws = check_laws(c)
+        print(f"\n{c.name:<50}  [{c.tradition}  |  {c.period}]")
+        print(f"  V = {str(c.V[:4])}...  theta = {c.theta}")
+        for k in ['LNC','LEM','DN','Liar']:
+            mark = '✓' if ('forced' in str(laws[k]) or 'resolved' in str(laws[k])) else '✗'
+            print(f"  {mark} {k}: {str(laws[k])[:60]}")
+
+def print_genealogy():
+    print("\nCarrier genealogy (roots only, then branches):\n")
+    roots = [c for c in REGISTRY.values() if not c.parents]
+    for r in roots:
+        print(genealogy(r.id, REGISTRY))
+
+def carriers_by_tradition():
+    from collections import defaultdict
+    groups = defaultdict(list)
+    for c in REGISTRY.values():
+        groups[c.tradition].append(c.name)
+    for tradition, names in sorted(groups.items()):
+        print(f"\n{tradition}:")
+        for n in names:
+            print(f"  {n}")
+
+def search(query: str):
+    """Search carriers by name, tradition, or content."""
+    q = query.lower()
+    return [c for c in REGISTRY.values()
+            if q in c.name.lower() or q in c.tradition.lower()
+            or q in c.key_insight.lower() or q in c.ml_note.lower()
+            or q in c.id.lower()]
+
+
+if __name__ == "__main__":
+    print("Propagation Logic Carrier Archive")
+    print(f"{len(REGISTRY)} carriers loaded.\n")
+    print_genealogy()
+    print("\n")
+    carriers_by_tradition()
+    print("\n--- Sample: Classical vs Daoist ---")
+    compare_carriers(REGISTRY['classical'], REGISTRY['daoist'])
+    print("\n--- Sample: Ubuntu vs Jain ---")
+    compare_carriers(REGISTRY['ubuntu'], REGISTRY['jain_syadvada'])
+    print("\n--- Sample: Buddhist Catuṣkoṭi ---")
+    report(REGISTRY['catuskoti'])
