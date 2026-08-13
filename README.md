@@ -1,4 +1,6 @@
-# The Math of Logic
+# The Math of Logic HAS BEEN MOVED TO Github.com/mathoflogic where you will find repos like /pl /forge /carriersets /modus 
+this repo will stay up but a superior repo has been established.
+-James
 
 **One propagation operator. Three parameters. Every formal system.**
 
