@@ -36,10 +36,12 @@ def main():
               ROOT, {"PYTHONPATH": ROOT})
     ok &= run("SKEPTIC", [sys.executable, "tests/skeptic.py"], ROOT,
               {"PYTHONPATH": ROOT})
+    ok &= run("VACUOUS", [sys.executable, "tests/vacuous.py"], ROOT,
+              {"PYTHONPATH": ROOT})
     ok &= run("ATLAS CHECKS", [sys.executable, "-c",
               "import carrierlib.checks; "
               "from carrierlib.core import run_claim; "
-              "from carriers.process import CARRIERS; "
+              "from carriers.process import GENERATED as CARRIERS; "
               "bad=0\n"
               "for c in CARRIERS:\n"
               "  for k in ('forces','breaks'):\n"

@@ -92,6 +92,8 @@ def Q(x) -> F:
         return F(x)
     if isinstance(x, float):
         raise LeavesV("float unlistable; use Fraction('3') or int")
+    if x != x:
+        raise LeavesV("NaN-shaped mark is not Q")
     raise LeavesV(f"not in Q: {type(x).__name__}")
 
 
@@ -210,6 +212,8 @@ def certify(fn, at=3, values=(-4, -3, -2, -1, 1, 2, 3, 4),
         discharged += 1
         if r != r1:
             gauge_ok = False
+    if scope == 0:
+        gauge_ok = False
     ok = gauge_ok and discharged > 0
     return Certificate(
         statement=f"rate(fn(x),x) at {at} is {r0}; gauge on declared grid",
