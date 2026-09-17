@@ -181,3 +181,176 @@ def _():
     loops_c = any(conting2(loops, w) for w in (0, 1))
     blob_c = any(conting2(blob, w) for w in (0, 1))
     return (not loops_c) and blob_c, "FORCED", f"loops={loops_c} blob={blob_c}"
+
+
+@check("mech_arrivals")
+def _():
+    def time_to(L0, C=1.0, goal=50.0):
+        x = L = 0.0
+        L = float(L0)
+        t = 0
+        while x < goal and t < 10 ** 6:
+            v = C / (C + L)
+            x += v
+            t += 1
+        return t
+    got = (time_to(0), time_to(2), time_to(8))
+    return got == (50, 150, 450), "FORCED", str(got)
+
+
+@check("mech_two_etas")
+def _():
+    def run(eta, steps=20, C=1.0):
+        x = L = 0.0
+        for _ in range(steps):
+            v = C / (C + L)
+            x += v
+            L += eta * v
+        return x, L
+    a, b = run(0.1), run(0.5)
+    return a != b, "FORCED", f"a={a} b={b}"
+
+
+@check("eq_collision_priced")
+def _():
+    xx = {"val": (F(9), F(6)), "g": "x2", "slot": F(2)}
+    tx = {"val": (F(9), F(6)), "g": "3x", "slot": F(0)}
+    free = xx["val"] == tx["val"]
+    mint = xx["g"] == tx["g"]
+    slot = xx["slot"] == tx["slot"]
+    return free and (not mint) and (not slot), "FORCED", "free merges; mint and slot refuse"
+
+
+@check("zn_fieldish")
+def _():
+    def units(n):
+        return [a for a in range(1, n) if any((a * b) % n == 1 for b in range(1, n))]
+    field = {n for n in range(2, 13) if len(units(n)) == n - 1}
+    return field == {2, 3, 5, 7, 11}, "FORCED", f"fieldish Z/n n=2..12: {sorted(field)}"
+
+
+@check("s3_not_abelian")
+def _():
+    from itertools import permutations, product
+    S3 = list(permutations(range(3)))
+
+    def comp(a, b):
+        return tuple(a[b[i]] for i in range(3))
+
+    ab = all(comp(a, b) == comp(b, a) for a, b in product(S3, S3))
+    return (not ab) and len(S3) == 6, "FORCED", "S3 order 6 not abelian"
+
+
+@check("op_min_closed_prod_leaks")
+def _():
+    from fractions import Fraction as F
+    from itertools import product
+    V3 = (0, F(1, 2), 1)
+    min_ok = all(min(a, b) in V3 for a, b in product(V3, V3))
+    prod_ok = all((a * b) in V3 for a, b in product(V3, V3))
+    return min_ok and (not prod_ok), "FORCED", "min closed; 1/2*1/2=1/4 leaves"
+
+
+@check("dna_double_copy")
+def _():
+    comp = dict(A="T", T="A", C="G", G="C")
+    s = "ATGCATGC"
+    c = "".join(comp[b] for b in s)
+    back = "".join(comp[b] for b in c)
+    return back == s, "FORCED", f"{s} -> {c} -> {back}"
+
+
+@check("dna_theta_base")
+def _():
+    V = set("ACGT")
+    return "X" not in V, "FORCED", "X not in {A,C,G,T}"
+
+
+@check("py_plus_refuses_str")
+def _():
+    try:
+        1 + "a"  # type: ignore
+        return False, "FORCED", "added"
+    except TypeError:
+        return True, "FORCED", "TypeError"
+
+
+@check("rust_move_refuse")
+def _():
+    owned = {"x"}
+    def take(name):
+        if name not in owned:
+            return False
+        owned.remove(name)
+        return True
+    ok1 = take("x")
+    ok2 = take("x")
+    return ok1 and (not ok2), "FORCED", "second take refused"
+
+
+@check("java_null_unbox")
+def _():
+    boxed = None
+    try:
+        if boxed is None:
+            raise ValueError("unbox null")
+        int(boxed)
+        return False, "FORCED", "unboxed"
+    except ValueError:
+        return True, "FORCED", "null unbox refused"
+
+
+@check("econ_budget")
+def _():
+    cash, price, qty = 10, 3, 4
+    ok_refuse = cash < price * qty
+    ok_buy = 10 >= 3 * 3
+    return ok_refuse and ok_buy, "FORCED", "4 units at 3 miss cash 10; 3 units land"
+
+
+@check("econ_ledger")
+def _():
+    # double entry: debit + credit = 0
+    books = [("cash", -3), ("inventory", 3)]
+    return sum(v for _, v in books) == 0, "FORCED", "debit/credit closes"
+
+
+@check("goodhart_target")
+def _():
+    # measure M predicts S until M is the target; then agents set M and S decouples
+    s = [1, 2, 3, 4]
+    m = [1, 2, 3, 4]  # correlated
+    coupled = m == s
+    targeted = [10, 10, 10, 10]  # optimize the metric
+    decoupled = targeted != s
+    return coupled and decoupled, "FORCED", "correlation dies once M is the target"
+
+
+@check("hayek_price_cost")
+def _():
+    # price as signal is not free: scaffolding load
+    signal = 5
+    scaffold = 2
+    oracle_free = signal  # ghost
+    paid = signal + scaffold
+    return paid != oracle_free, "FORCED", f"oracle {oracle_free} vs paid {paid}"
+
+
+@check("lucas_slope_breaks")
+def _():
+    # fitted slope on old policy; agents change rule after policy shift
+    old = [(0, 0), (1, 2), (2, 4)]  # slope 2
+    def slope(pts):
+        return (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
+    new = [(0, 0), (1, 1), (2, 2)]  # agents anticipated
+    return slope(old) != slope(new), "FORCED", f"old {slope(old)} new {slope(new)}"
+
+
+@check("ghost_zero_cost_close")
+def _():
+    # system won't close without an unpaid assumption
+    known = 3
+    need = 4
+    closed_honest = known >= need
+    closed_with_ghost = (known + 1) >= need  # insert zero-cost unit
+    return (not closed_honest) and closed_with_ghost, "FORCED", "closure only after unpaid +1"

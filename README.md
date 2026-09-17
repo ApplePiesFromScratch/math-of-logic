@@ -17,13 +17,11 @@ Stdlib. No install. Nouns are labels. There is no grounding slot.
 
 ```
 PYTHONPATH=. python3 -c "from pl import isolate, rate; x=isolate(3); print(rate(x*x, x))"
+PYTHONPATH=. python3 tests/skeptic.py
+python verify.py
 ```
 
 Prints `6`. V is `int` or `Fraction`. `float` and `bool` leave V.
-
-```
-python verify.py
-```
 
 ## What this is
 
@@ -43,8 +41,9 @@ PYTHONPATH=. python -m studio.proofcut
 PYTHONPATH=. python -m studio.logic
 PYTHONPATH=. python -m mechanism.verify
 python origin/tests/run.py
-PYTHONPATH=modal python -m modal.verify
-PYTHONPATH=process-calc python -m pcalc.lessons
+PYTHONPATH=. python -m modal.verify
+PYTHONPATH=. python -m modal.epistemic
+PYTHONPATH=process-calc:. python -m pcalc.lessons
 python carriersets/tools/atlas.py
 python carriersets/library_verify.py
 python pl/PROCESS.py
@@ -69,9 +68,12 @@ docs/            maps, not a second kernel
 ## Honest scope
 
 - Origin composite is CONDITIONAL: host `+` is Wall 0.
-- `verify.py` atlas section runs process-carriers live.
-  `library_verify.py` runs the inherited catalog when present.
+- Default library is LIVE (executable checks only).
+  Museum citations: `python carriersets/library_verify.py --all`.
+  54.5% was the mixed catalog. That mix is no longer the headline.
 - Logic Bin(V3) and assoc count are computed in studio/logic.py.
 - Mechanism does not describe stars or Navier-Stokes.
+
+Falsifiers: `FALSIFIERS.md`. If a headline has no kill-line, it is not a claim.
 
 Replica, receipt, ledger line. Or it did not happen.

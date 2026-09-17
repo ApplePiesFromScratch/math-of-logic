@@ -12,7 +12,7 @@ later presentation.
 
 `rate(x*x, x)` at 3 is 6 in 5 arithmetic ops on Q. Exact fraction.
 The school path uses 5 ops and lands on 6+h. Deleting h is not an
-op on Q. Check: `python -m studio.steps`. Falsifier: finite + * /
+op on Q. Check: `PYTHONPATH=. python -m studio.steps`. Falsifier: finite + * /
 on Q that sends the difference quotient to 6 for generic h.
 
 This is a map. It is not how variation *is*. It is the smallest G

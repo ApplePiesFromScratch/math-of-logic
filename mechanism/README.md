@@ -26,5 +26,4 @@ PYTHONPATH=. python3 -m mechanism.verify
 Stars, energy, Navier-Stokes: unpaid. Host division in the speed
 row: stipulated.
 
-Original long script: `attachments/useful_pattern.py`.
-This folder is the mechanism part for the mega repo.
+Original long script: `mechanism/useful_pattern.py`.

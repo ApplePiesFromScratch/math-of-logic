@@ -1,5 +1,5 @@
 import sys
-from studio import algebra, calc, logic, steps
+from studio import algebra, calc, eq, logic, steps
 
 
 def main():
@@ -12,6 +12,8 @@ def main():
     calc.main()
     print()
     steps.main()
+    print()
+    eq.main()
     print()
     print("verdict PASS")
     return 0

@@ -15,12 +15,6 @@ This site is a map of those cuts. It is not a claim that the universe
 is a carrier, or that logic and gravity are “the same thing.” A name
 introduces structure. It does not uncover essence.
 
-It is also not a pencil. One replica (exact-Q pairs, first channel)
-is a small V. The *model* is the knobs: they map existing formal
-systems and they generate new ones. Waving the generator off because
-one replica is small is the geocentrist move — scoring a new isolation
-as a trick inside the old alphabet.
-
 Kernel in this checkout: `from pl import isolate, rate, certify, Runtime`.
 `python -m pl.forge` is not here. Tables come from `certify` and `studio`.
 

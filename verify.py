@@ -23,11 +23,9 @@ def main():
     ok &= run("ORIGIN", [sys.executable, "tests/run.py"],
               os.path.join(ROOT, "origin"))
     ok &= run("MODAL", [sys.executable, "-m", "modal.verify"],
-              os.path.join(ROOT, "modal"),
-              {"PYTHONPATH": os.path.join(ROOT, "modal")})
+              ROOT, {"PYTHONPATH": ROOT})
     ok &= run("EPISTEMIC", [sys.executable, "-m", "modal.epistemic"],
-              os.path.join(ROOT, "modal"),
-              {"PYTHONPATH": os.path.join(ROOT, "modal")})
+              ROOT, {"PYTHONPATH": ROOT})
     ok &= run("STUDIO STEPS", [sys.executable, "-m", "studio.steps"],
               ROOT, {"PYTHONPATH": ROOT})
     ok &= run("EQ SCALE", [sys.executable, "-m", "studio.eq"],
@@ -36,6 +34,8 @@ def main():
               ROOT, {"PYTHONPATH": ROOT})
     ok &= run("LOGIC CENSUS", [sys.executable, "-m", "studio.logic"],
               ROOT, {"PYTHONPATH": ROOT})
+    ok &= run("SKEPTIC", [sys.executable, "tests/skeptic.py"], ROOT,
+              {"PYTHONPATH": ROOT})
     ok &= run("ATLAS CHECKS", [sys.executable, "-c",
               "import carrierlib.checks; "
               "from carrierlib.core import run_claim; "

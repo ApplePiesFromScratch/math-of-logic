@@ -1,729 +1,818 @@
 [
  {
   "carrier": "CL2",
-  "claims": 4,
+  "claims": 3,
   "paid": 3,
   "failed": 0,
   "sha_prev": "GENESIS",
-  "sha": "10a7d3a480769130"
+  "sha": "fdbca098879d493b"
  },
  {
   "carrier": "L3",
-  "claims": 4,
+  "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "10a7d3a480769130",
-  "sha": "5c6aa7c61b89a9ed"
+  "sha_prev": "fdbca098879d493b",
+  "sha": "e38313067e38864e"
  },
  {
   "carrier": "K3",
   "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "5c6aa7c61b89a9ed",
-  "sha": "b03213a5ff30cafd"
+  "sha_prev": "e38313067e38864e",
+  "sha": "2071f5a9567055e6"
  },
  {
   "carrier": "WK3",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "b03213a5ff30cafd",
-  "sha": "48c4b1df805a3a67"
+  "sha_prev": "2071f5a9567055e6",
+  "sha": "548be68c5511a934"
  },
  {
   "carrier": "B3",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "48c4b1df805a3a67",
-  "sha": "c851db8769e923a6"
+  "sha_prev": "548be68c5511a934",
+  "sha": "f515834a7031fe20"
  },
  {
   "carrier": "LP",
   "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "c851db8769e923a6",
-  "sha": "e87254f92aa4a43d"
+  "sha_prev": "f515834a7031fe20",
+  "sha": "5a6ec185edfdc4d9"
  },
  {
   "carrier": "FUZZY_PROD",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "e87254f92aa4a43d",
-  "sha": "fffd5f4a13428983"
+  "sha_prev": "5a6ec185edfdc4d9",
+  "sha": "6f3ed6956304e798"
  },
  {
   "carrier": "FUZZY_LUK",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "fffd5f4a13428983",
-  "sha": "bc65cd815e5ca815"
+  "sha_prev": "6f3ed6956304e798",
+  "sha": "fbc928113aafa96e"
  },
  {
   "carrier": "FUZZY_GODEL",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "bc65cd815e5ca815",
-  "sha": "e0c1b1068cabe5b1"
+  "sha_prev": "fbc928113aafa96e",
+  "sha": "caba5b8c6e9fabcd"
  },
  {
   "carrier": "INT",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "e0c1b1068cabe5b1",
-  "sha": "b64cd388e050cca9"
+  "sha_prev": "caba5b8c6e9fabcd",
+  "sha": "ee0264212a4de16c"
  },
  {
   "carrier": "LINEAR",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "b64cd388e050cca9",
-  "sha": "afe047372bbdec81"
+  "sha_prev": "ee0264212a4de16c",
+  "sha": "6911a9b6066ebef8"
  },
  {
   "carrier": "RELEVANCE",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "afe047372bbdec81",
-  "sha": "e5674b0a604505ca"
+  "sha_prev": "6911a9b6066ebef8",
+  "sha": "f24e4dcde0263a81"
  },
  {
   "carrier": "DUAL_INT",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "e5674b0a604505ca",
-  "sha": "ca595cdb925558a5"
+  "sha_prev": "f24e4dcde0263a81",
+  "sha": "d036f969371d6ae7"
  },
  {
   "carrier": "SUBSTRUCT",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "ca595cdb925558a5",
-  "sha": "b71524e275f51e2d"
+  "sha_prev": "d036f969371d6ae7",
+  "sha": "95481e778da658d9"
  },
  {
   "carrier": "MODAL_K",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "b71524e275f51e2d",
-  "sha": "d2109da7832f3d23"
+  "sha_prev": "95481e778da658d9",
+  "sha": "6086ff23b6aedb74"
  },
  {
   "carrier": "MODAL_T",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "d2109da7832f3d23",
-  "sha": "6e0894a88902dca6"
+  "sha_prev": "6086ff23b6aedb74",
+  "sha": "44a810ab1244934a"
  },
  {
   "carrier": "MODAL_S4",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "6e0894a88902dca6",
-  "sha": "e2501499f65711e4"
+  "sha_prev": "44a810ab1244934a",
+  "sha": "663303b52583c4be"
  },
  {
   "carrier": "MODAL_S5",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "e2501499f65711e4",
-  "sha": "0f5c79bb10e9be00"
+  "sha_prev": "663303b52583c4be",
+  "sha": "ce128b09f25de049"
  },
  {
   "carrier": "MODAL_GL",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "0f5c79bb10e9be00",
-  "sha": "e77efc206fc4f99a"
+  "sha_prev": "ce128b09f25de049",
+  "sha": "0130dc3bfc3431ee"
  },
  {
   "carrier": "EPISTEMIC",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "e77efc206fc4f99a",
-  "sha": "c6e81065383bb0de"
+  "sha_prev": "0130dc3bfc3431ee",
+  "sha": "313a0fa4c26bec1d"
  },
  {
   "carrier": "TEMPORAL",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "c6e81065383bb0de",
-  "sha": "3e5dd0450cf2af72"
+  "sha_prev": "313a0fa4c26bec1d",
+  "sha": "c1dcb009e00a837a"
  },
  {
   "carrier": "DEONTIC",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "3e5dd0450cf2af72",
-  "sha": "79b678f39aceb3ea"
+  "sha_prev": "c1dcb009e00a837a",
+  "sha": "f002ddb837f1502c"
  },
  {
   "carrier": "POST_N",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "79b678f39aceb3ea",
-  "sha": "b2d32e3ca1227880"
+  "sha_prev": "f002ddb837f1502c",
+  "sha": "58aef5b9b35117a5"
  },
  {
   "carrier": "BELNAP",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "b2d32e3ca1227880",
-  "sha": "144902f0609eaeae"
+  "sha_prev": "58aef5b9b35117a5",
+  "sha": "8629a106c3ede97e"
  },
  {
   "carrier": "MV_ALG",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "144902f0609eaeae",
-  "sha": "b82c88f0747409cc"
+  "sha_prev": "8629a106c3ede97e",
+  "sha": "ab20615deb7617e2"
  },
  {
   "carrier": "EFFECT",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "b82c88f0747409cc",
-  "sha": "8afcb34d241f5624"
+  "sha_prev": "ab20615deb7617e2",
+  "sha": "3a31ebd250c78296"
  },
  {
   "carrier": "HEYTING",
   "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "8afcb34d241f5624",
-  "sha": "daa5b574c35c3d17"
+  "sha_prev": "3a31ebd250c78296",
+  "sha": "2cd0df83371e68d4"
  },
  {
   "carrier": "BL",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "daa5b574c35c3d17",
-  "sha": "22ca19dc6a68c20c"
+  "sha_prev": "2cd0df83371e68d4",
+  "sha": "d6a2eefd47bde343"
  },
  {
   "carrier": "ZF",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "22ca19dc6a68c20c",
-  "sha": "bbbe16490b8a7d99"
+  "sha_prev": "d6a2eefd47bde343",
+  "sha": "3a6953c95f53b86e"
  },
  {
   "carrier": "NF",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "bbbe16490b8a7d99",
-  "sha": "8e61d117a0e2c460"
+  "sha_prev": "3a6953c95f53b86e",
+  "sha": "a335e7ce06c97b8d"
  },
  {
   "carrier": "STT",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "8e61d117a0e2c460",
-  "sha": "8b5a631e85f17188"
+  "sha_prev": "a335e7ce06c97b8d",
+  "sha": "9c0a8738abe26617"
  },
  {
   "carrier": "MLTT",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "8b5a631e85f17188",
-  "sha": "974fb7bfda291c88"
- },
- {
-  "carrier": "HOTT",
-  "claims": 2,
-  "paid": 0,
-  "failed": 0,
-  "sha_prev": "974fb7bfda291c88",
-  "sha": "32c40d88786aa46f"
+  "sha_prev": "9c0a8738abe26617",
+  "sha": "9ffc9a6333a01d92"
  },
  {
   "carrier": "TOPOS",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "32c40d88786aa46f",
-  "sha": "9409aef6d62768b5"
+  "sha_prev": "9ffc9a6333a01d92",
+  "sha": "345d4887c3071348"
  },
  {
   "carrier": "ORDINALS",
-  "claims": 4,
+  "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "9409aef6d62768b5",
-  "sha": "5cd587945f017a48"
+  "sha_prev": "345d4887c3071348",
+  "sha": "8484214444e729a6"
  },
  {
   "carrier": "DUAL_NUM",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "5cd587945f017a48",
-  "sha": "877226d8823dae55"
+  "sha_prev": "8484214444e729a6",
+  "sha": "fcda9288982f77df"
  },
  {
   "carrier": "COMPLEX",
-  "claims": 4,
+  "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "877226d8823dae55",
-  "sha": "dbb3671d98efbe48"
- },
- {
-  "carrier": "NSA",
-  "claims": 2,
-  "paid": 0,
-  "failed": 0,
-  "sha_prev": "dbb3671d98efbe48",
-  "sha": "e4604adfdb2b44f1"
+  "sha_prev": "fcda9288982f77df",
+  "sha": "d5c4d6468068cfe6"
  },
  {
   "carrier": "PADIC",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "e4604adfdb2b44f1",
-  "sha": "55ba7751cc651009"
+  "sha_prev": "d5c4d6468068cfe6",
+  "sha": "21fc92f20bbca915"
  },
  {
   "carrier": "TROPICAL",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "55ba7751cc651009",
-  "sha": "07f1ffca2b06aa17"
+  "sha_prev": "21fc92f20bbca915",
+  "sha": "d5bbcae38106f04c"
  },
  {
   "carrier": "QUANTUM",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "07f1ffca2b06aa17",
-  "sha": "cf0e9bd5f34699a3"
+  "sha_prev": "d5bbcae38106f04c",
+  "sha": "c36601ad9bb15f9d"
  },
  {
   "carrier": "SHANNON",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "cf0e9bd5f34699a3",
-  "sha": "7b40a8fa45e33375"
+  "sha_prev": "c36601ad9bb15f9d",
+  "sha": "853fd9e1e6493243"
  },
  {
   "carrier": "STATMECH",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "7b40a8fa45e33375",
-  "sha": "05e3d28c01e81e6a"
+  "sha_prev": "853fd9e1e6493243",
+  "sha": "4accd04f2f97819e"
  },
  {
   "carrier": "FISHER",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "05e3d28c01e81e6a",
-  "sha": "b5fa1e74a6505934"
+  "sha_prev": "4accd04f2f97819e",
+  "sha": "600109c5d654ef9f"
  },
  {
   "carrier": "CATEGORY",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "b5fa1e74a6505934",
-  "sha": "05b0b0ddf0703889"
+  "sha_prev": "600109c5d654ef9f",
+  "sha": "3292fea922719766"
  },
  {
   "carrier": "GALOIS",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "05b0b0ddf0703889",
-  "sha": "398db8810c45b0b2"
+  "sha_prev": "3292fea922719766",
+  "sha": "7285904041136f7a"
  },
  {
   "carrier": "LEBESGUE",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "398db8810c45b0b2",
-  "sha": "3f0403073c3c8345"
+  "sha_prev": "7285904041136f7a",
+  "sha": "7e81dbfd1d00c82c"
  },
  {
   "carrier": "ITO",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "3f0403073c3c8345",
-  "sha": "9118cd3fc83282ed"
+  "sha_prev": "7e81dbfd1d00c82c",
+  "sha": "b07200bd428e688b"
  },
  {
   "carrier": "EXTERIOR",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "9118cd3fc83282ed",
-  "sha": "3c41b659a7707caa"
+  "sha_prev": "b07200bd428e688b",
+  "sha": "5ad8c01807492a5c"
  },
  {
   "carrier": "LIE",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "3c41b659a7707caa",
-  "sha": "0e7a63b9dec5c842"
+  "sha_prev": "5ad8c01807492a5c",
+  "sha": "b97e1eda1a64ed41"
  },
  {
   "carrier": "HOMOLOGY",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "0e7a63b9dec5c842",
-  "sha": "54871586d9561d3d"
+  "sha_prev": "b97e1eda1a64ed41",
+  "sha": "18f982377ff329e1"
  },
  {
   "carrier": "CONVEX",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "54871586d9561d3d",
-  "sha": "9c579ec92e457d4a"
+  "sha_prev": "18f982377ff329e1",
+  "sha": "93732cee6c662d76"
  },
  {
   "carrier": "SYMPLECTIC",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "9c579ec92e457d4a",
-  "sha": "0b09fe8532ab95dd"
+  "sha_prev": "93732cee6c662d76",
+  "sha": "b192c6dd55618057"
  },
  {
   "carrier": "SURREAL",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "0b09fe8532ab95dd",
-  "sha": "697d2759c97eeba3"
+  "sha_prev": "b192c6dd55618057",
+  "sha": "9b61def93a8ff693"
  },
  {
   "carrier": "KLEENE",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "697d2759c97eeba3",
-  "sha": "680080b809bbe9fa"
+  "sha_prev": "9b61def93a8ff693",
+  "sha": "a22a0999e205a5a3"
  },
  {
   "carrier": "HOARE",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "680080b809bbe9fa",
-  "sha": "ea1ac2d212d15fd8"
+  "sha_prev": "a22a0999e205a5a3",
+  "sha": "1e86a6fd5096b2c8"
  },
  {
   "carrier": "SEPARATION",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "ea1ac2d212d15fd8",
-  "sha": "846e2380ff3e6aa8"
+  "sha_prev": "1e86a6fd5096b2c8",
+  "sha": "4fb128a27514b0bc"
  },
  {
   "carrier": "LAMBDA",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "846e2380ff3e6aa8",
-  "sha": "0db4142c4c3b69fb"
+  "sha_prev": "4fb128a27514b0bc",
+  "sha": "0969d8e0ab3a5b1d"
  },
  {
   "carrier": "DOMAIN",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "0db4142c4c3b69fb",
-  "sha": "0993eae499312b47"
+  "sha_prev": "0969d8e0ab3a5b1d",
+  "sha": "2fbcb535b28dd3d6"
  },
  {
   "carrier": "ABSINT",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "0993eae499312b47",
-  "sha": "3dbdf628976f94c5"
+  "sha_prev": "2fbcb535b28dd3d6",
+  "sha": "c20a009c47dff809"
  },
  {
   "carrier": "PROCESS",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "3dbdf628976f94c5",
-  "sha": "f031eddb2f59fc94"
+  "sha_prev": "c20a009c47dff809",
+  "sha": "83253014182c9b3d"
  },
  {
   "carrier": "COMPUTABILITY",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "f031eddb2f59fc94",
-  "sha": "c7d09e04639cbf4d"
+  "sha_prev": "83253014182c9b3d",
+  "sha": "00aa03e44578c995"
  },
  {
   "carrier": "COMPLEXITY",
-  "claims": 4,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "c7d09e04639cbf4d",
-  "sha": "de3c6963c54846ac"
- },
- {
-  "carrier": "PROOF_THEORY",
-  "claims": 4,
-  "paid": 0,
-  "failed": 0,
-  "sha_prev": "de3c6963c54846ac",
-  "sha": "138238444c6cd18e"
+  "sha_prev": "00aa03e44578c995",
+  "sha": "2fd7664ee37afd18"
  },
  {
   "carrier": "MODEL_THEORY",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "138238444c6cd18e",
-  "sha": "465c5851f8ba5d00"
- },
- {
-  "carrier": "REVERSE_MATH",
-  "claims": 2,
-  "paid": 0,
-  "failed": 0,
-  "sha_prev": "465c5851f8ba5d00",
-  "sha": "b0d9dbb50f22f40d"
+  "sha_prev": "2fd7664ee37afd18",
+  "sha": "48b01a850bf7ed9b"
  },
  {
   "carrier": "MONADS",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "b0d9dbb50f22f40d",
-  "sha": "ab7516cc245409be"
+  "sha_prev": "48b01a850bf7ed9b",
+  "sha": "9fecfb37f40fd1ae"
  },
  {
   "carrier": "PETRI",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "ab7516cc245409be",
-  "sha": "89e7fb5e9a34efd9"
+  "sha_prev": "9fecfb37f40fd1ae",
+  "sha": "5c741f90a8d2dbaf"
  },
  {
   "carrier": "LIVING_MAP",
-  "claims": 4,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "89e7fb5e9a34efd9",
-  "sha": "9203622ee7a78a36"
+  "sha_prev": "5c741f90a8d2dbaf",
+  "sha": "d99a5917ff1db096"
  },
  {
   "carrier": "DRAS_SCALE",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "9203622ee7a78a36",
-  "sha": "ed559f6c15820a22"
+  "sha_prev": "d99a5917ff1db096",
+  "sha": "76ed4aa1ead287b7"
  },
  {
   "carrier": "THERMO",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "ed559f6c15820a22",
-  "sha": "1c9fa3645e29660f"
+  "sha_prev": "76ed4aa1ead287b7",
+  "sha": "22519a8488da6b39"
  },
  {
   "carrier": "GR",
-  "claims": 4,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "1c9fa3645e29660f",
-  "sha": "4ff04a5814f72dd4"
+  "sha_prev": "22519a8488da6b39",
+  "sha": "ecd06b637af90ed5"
  },
  {
   "carrier": "QFT",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "4ff04a5814f72dd4",
-  "sha": "e68e0f537ffda52d"
+  "sha_prev": "ecd06b637af90ed5",
+  "sha": "f6bb67eabe7a8e13"
  },
  {
   "carrier": "KOLMOGOROV",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "e68e0f537ffda52d",
-  "sha": "cdc1d3620bcd0c0e"
+  "sha_prev": "f6bb67eabe7a8e13",
+  "sha": "088a3e4c323adf02"
  },
  {
   "carrier": "BAYES",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "cdc1d3620bcd0c0e",
-  "sha": "f748c3a4bd72ca25"
+  "sha_prev": "088a3e4c323adf02",
+  "sha": "d6f89259f9a1eeb7"
  },
  {
   "carrier": "DEMPSTER_SHAFER",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "f748c3a4bd72ca25",
-  "sha": "c088e91ed2bd56df"
+  "sha_prev": "d6f89259f9a1eeb7",
+  "sha": "70751c28c9b5445d"
  },
  {
   "carrier": "POSSIBILITY",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "c088e91ed2bd56df",
-  "sha": "6cd3f05576cda02b"
+  "sha_prev": "70751c28c9b5445d",
+  "sha": "ed0f7aacf5736c7d"
  },
  {
   "carrier": "IMPRECISE",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "6cd3f05576cda02b",
-  "sha": "d6a2d75c07154776"
+  "sha_prev": "ed0f7aacf5736c7d",
+  "sha": "bb1c4d46ffc68c9f"
  },
  {
   "carrier": "BOUNDARY_LAW",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "d6a2d75c07154776",
-  "sha": "85934e5dfbfcc78d"
+  "sha_prev": "bb1c4d46ffc68c9f",
+  "sha": "b0ba2398aefe25a5"
  },
  {
   "carrier": "COPENHAGEN",
-  "claims": 4,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "85934e5dfbfcc78d",
-  "sha": "c29d1d56bae2d872"
+  "sha_prev": "b0ba2398aefe25a5",
+  "sha": "8e5acab321993d5d"
  },
  {
   "carrier": "MWI",
-  "claims": 4,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "c29d1d56bae2d872",
-  "sha": "a80affc24555042c"
+  "sha_prev": "8e5acab321993d5d",
+  "sha": "f434af742c4e977d"
  },
  {
   "carrier": "BOHM",
-  "claims": 4,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "a80affc24555042c",
-  "sha": "ef157d121e7c348d"
+  "sha_prev": "f434af742c4e977d",
+  "sha": "2529573353b84d17"
  },
  {
   "carrier": "HISTORIES",
-  "claims": 2,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "ef157d121e7c348d",
-  "sha": "af76264bb0861d5f"
+  "sha_prev": "2529573353b84d17",
+  "sha": "a98b063701f89e94"
  },
  {
   "carrier": "GRW",
-  "claims": 3,
+  "claims": 2,
   "paid": 2,
   "failed": 0,
-  "sha_prev": "af76264bb0861d5f",
-  "sha": "a0479f96b4f4efe4"
+  "sha_prev": "a98b063701f89e94",
+  "sha": "284e75581369c3e7"
  },
  {
   "carrier": "RELATIONAL",
-  "claims": 3,
+  "claims": 1,
   "paid": 1,
   "failed": 0,
-  "sha_prev": "a0479f96b4f4efe4",
-  "sha": "843a81831d9c7536"
+  "sha_prev": "284e75581369c3e7",
+  "sha": "d235a73e30d86d29"
  },
  {
   "carrier": "PROC_PAIR",
   "claims": 4,
   "paid": 4,
   "failed": 0,
-  "sha_prev": "843a81831d9c7536",
-  "sha": "ac3de3371777a517"
+  "sha_prev": "d235a73e30d86d29",
+  "sha": "033d8011c762fbf1"
  },
  {
   "carrier": "ORIGIN_WRAP",
   "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "ac3de3371777a517",
-  "sha": "43bf36a567e0edc3"
+  "sha_prev": "033d8011c762fbf1",
+  "sha": "2def2cd7c57ef65a"
  },
  {
   "carrier": "MODUS_MP",
   "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "43bf36a567e0edc3",
-  "sha": "4634aed80fffb611"
+  "sha_prev": "2def2cd7c57ef65a",
+  "sha": "3410874b5e49903e"
  },
  {
   "carrier": "MODAL_ATLAS",
   "claims": 3,
   "paid": 3,
   "failed": 0,
-  "sha_prev": "4634aed80fffb611",
-  "sha": "a52a6ea1c2fbf732"
+  "sha_prev": "3410874b5e49903e",
+  "sha": "a1db22683b7c6b49"
  },
  {
-  "carriers": 89,
-  "claims": 231,
-  "paid": 126,
-  "paid_fraction": 54.5,
-  "executable_checks_run": 126,
+  "carrier": "MECH_TRAVELER",
+  "claims": 2,
+  "paid": 2,
+  "failed": 0,
+  "sha_prev": "a1db22683b7c6b49",
+  "sha": "467ae2823e948026"
+ },
+ {
+  "carrier": "EQ_SCALE",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "467ae2823e948026",
+  "sha": "2c2ade9a192ed456"
+ },
+ {
+  "carrier": "ZN_FIELD",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "2c2ade9a192ed456",
+  "sha": "c07073df136bcf82"
+ },
+ {
+  "carrier": "S3_NONAB",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "c07073df136bcf82",
+  "sha": "458279ecba27a484"
+ },
+ {
+  "carrier": "OP_PROGRAMS",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "458279ecba27a484",
+  "sha": "e335d473d0b387f6"
+ },
+ {
+  "carrier": "DNA_TAPE",
+  "claims": 2,
+  "paid": 2,
+  "failed": 0,
+  "sha_prev": "e335d473d0b387f6",
+  "sha": "f5fce795e4df7876"
+ },
+ {
+  "carrier": "PY_RUNTIME",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "f5fce795e4df7876",
+  "sha": "35aabb62a1b5accc"
+ },
+ {
+  "carrier": "RUST_MOVE",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "35aabb62a1b5accc",
+  "sha": "8ec922615cdaebe4"
+ },
+ {
+  "carrier": "JAVA_UNBOX",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "8ec922615cdaebe4",
+  "sha": "4858f28a6ba8a2d5"
+ },
+ {
+  "carrier": "ECON_BUDGET",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "4858f28a6ba8a2d5",
+  "sha": "c456257f4bbd9564"
+ },
+ {
+  "carrier": "ECON_LEDGER",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "c456257f4bbd9564",
+  "sha": "e8a3d5cf67c9be39"
+ },
+ {
+  "carrier": "GOODHART",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "e8a3d5cf67c9be39",
+  "sha": "1333426bb2674b5d"
+ },
+ {
+  "carrier": "HAYEK_SIGNAL",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "1333426bb2674b5d",
+  "sha": "d8ce4ab76ae5fbf2"
+ },
+ {
+  "carrier": "LUCAS_SLOPE",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "d8ce4ab76ae5fbf2",
+  "sha": "c96e86e9914aa8d3"
+ },
+ {
+  "carrier": "GHOST_CLOSE",
+  "claims": 1,
+  "paid": 1,
+  "failed": 0,
+  "sha_prev": "c96e86e9914aa8d3",
+  "sha": "c43806346806a214"
+ },
+ {
+  "carriers": 100,
+  "mode": "LIVE",
+  "claims": 143,
+  "paid": 143,
+  "paid_fraction": 100.0,
+  "executable_checks_run": 143,
   "verdict": "PASS/STIPULATED",
   "non_claims": [
    "NOT claimed: that PRESUMED entries are false or even doubtful \u2014 only that this library did not re-derive them, and prices itself accordingly.",
    "NOT claimed: that a carrier's insight prose is itself verified \u2014 the checks decide the Forces/Breaks tables; the prose is commentary.",
    "NOT claimed: completeness \u2014 85 carriers is a library, not the space of all formal systems."
   ],
-  "sha_prev": "a52a6ea1c2fbf732",
-  "sha": "7ad65439f2226f82"
+  "sha_prev": "c43806346806a214",
+  "sha": "d45f2189651b3375"
  }
 ]

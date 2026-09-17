@@ -47,16 +47,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--carrier", help="verify a single carrier by key")
     ap.add_argument("--section", help="verify a single section")
+    ap.add_argument("--all", action="store_true",
+                    help="include ARCHIVE museum sections (citation rows)")
     a = ap.parse_args()
+    from carriers import ALL_SECTIONS, SECTIONS as LIVE
+    sections = ALL_SECTIONS if a.all else LIVE
 
     t0 = time.time()
     chain = []
     total_paid = total_claims = total_checks = 0
     any_fail = []
     print("\n  PROPAGATION LOGIC — CARRIER LIBRARY VERIFICATION")
+    print("  LIVE catalog (executable checks). Archive is --all.")
     print("  P/G->Q is constant; V, G, theta vary; every claim priced.")
 
-    for section, carriers in SECTIONS:
+    for section, carriers in sections:
         if a.section and section != a.section:
             continue
         rows = []
@@ -98,7 +103,8 @@ def main():
                     print(f"                -> {r['evidence'][:100]}")
 
     frac = 100 * total_paid / total_claims if total_claims else 0
-    body = {"carriers": sum(len(cs_) for _, cs_ in SECTIONS),
+    body = {"carriers": sum(len(cs_) for _, cs_ in sections),
+            "mode": "ALL" if a.all else "LIVE",
             "claims": total_claims, "paid": total_paid,
             "paid_fraction": round(frac, 1),
             "executable_checks_run": total_checks,

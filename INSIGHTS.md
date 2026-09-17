@@ -13,7 +13,9 @@ gate refuses to promote.
 - MP dies where glut is designated. LP witness (1/2, 0). K3 gap protects.
 - POST4 shape: a schema can hold while the trigger cannot mean refutation.
 - Carroll: add the rule as a premise five times, B never detaches. G is not V.
-- 16 binary maps on V2. 19683 on V3. 113 associative. No YYYY law row on V3.
+- 16 binary maps on V2. 19683 on V3. 113 associative.
+- AND-like among those 113 (1 absorbs, 0 annihilates) = 17 on this predicate.
+  The old "AND-like=1" was a tighter museum label, not this count.
 
 ## Arithmetic / origin
 

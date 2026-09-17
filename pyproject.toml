@@ -7,4 +7,4 @@ readme = "README.md"
 license = {text = "MIT"}
 
 [tool.setuptools.packages.find]
-include = ["pl*", "mechanism*", "studio*"]
+include = ["pl*", "mechanism*", "studio*", "modal*"]
