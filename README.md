@@ -111,7 +111,7 @@ mechanism/        traveler seed. V G theta fall out if A=A is refused
 origin/           two routes to a wrap. walls. composite CONDITIONAL
 modal/            frames generated n<=3 (530). correspondence is a filter
 process-calc/     labs. same Reading as PROCESS
-studio/           steps, eq scale, proofcut, logic census, operators
+studio/           steps, eq scale, proofcut, logic census, operators, root bug of logic and math.
 carriersets/      catalog + recover + library_verify
 tests/            skeptic (headline numbers) and vacuous (empty-all)
 docs/             maps, including ECON_MAP.md
