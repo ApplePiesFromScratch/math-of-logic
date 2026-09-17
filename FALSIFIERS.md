@@ -14,8 +14,9 @@ Run `PYTHONPATH=. python3 tests/skeptic.py`.
 | \|Bin(V3)\|=19683 | `3**9` | arithmetic |
 | 113 associative on V3 labels | studio.logic / skeptic | count ≠ 113 |
 | 530 frames n≤3 | modal.engine all_frames 1..3 | count ≠ 530 |
-| origin composite CONDITIONAL | origin/tests/run.py | prints FORCED |
-| library paid 126/231 | library_verify.py | paid fraction changes without a commit note |
+| origin composite CONDITIONAL | origin/tests/run.py | prints FORCED as composite |
+| LIVE paid is generated rows | `library_verify.py` | a generator row fails |
+| 95–104 are STIPULATED | those checks | they return FORCED |
 
 Not claimed, so not falsified here:
 

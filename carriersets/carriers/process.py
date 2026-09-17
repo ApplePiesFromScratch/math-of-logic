@@ -164,7 +164,7 @@ CARRIERS = [
   breaks=[],
   useful_for=["language carriers"]),
 
- dict(id=97, key="RUST_MOVE", name="Rust move miniature",
+ dict(id=97, key="RUST_MOVE_MINI", name="Ownership-set miniature (Rust-shaped)",
   origin="rustc borrow",
   V="owned names",
   G="take / move",
@@ -176,7 +176,7 @@ CARRIERS = [
   breaks=[],
   useful_for=["language carriers"]),
 
- dict(id=98, key="JAVA_UNBOX", name="Java null unbox miniature",
+ dict(id=98, key="JAVA_UNBOX_MINI", name="Null-unbox miniature (Java-shaped)",
   origin="JVM",
   V="boxed / primitive",
   G="unbox",
@@ -259,3 +259,6 @@ CARRIERS = [
   breaks=[],
   useful_for=["reification audit"]),
 ]
+
+GENERATED = [c for c in CARRIERS if c["id"] < 95]
+HYPOTHESIS = [c for c in CARRIERS if c["id"] >= 95]

@@ -31,19 +31,9 @@ def main():
         bad += not check("float leaves V", False)
     except LeavesV:
         bad += not check("float leaves V", True)
-    xx = isolate(3)
-    tx = isolate(3, 2)
-    # 3x at 3 seed 2: value 9 channel 6
-    three_x = isolate(3) * 3
-    # isolate(3)*3 = (3,1)* (3,0) = (9, 3) wait
-    # 3*x with x=isolate(3) seed 1: Reading 3 * (3,1) = (9, 3)
-    # seed 2: isolate(3,2)*3
-    a = isolate(3, 1) * isolate(3, 1)  # x^2
-    b = isolate(3) * 3
-    # adjust: 3x seed 2 at 3: v=9 r=6
-    from pl.PROCESS import Reading
-    b = Reading(F(9), F(6))
-    bad += not check("collision (9,6) value-eq", (a.v, a.r) == (b.v, b.r))
+    a = isolate(3, 1) * isolate(3, 1)  # x^2 seed 1
+    b = isolate(3, 2) * 3              # 3x seed 2
+    bad += not check("collision (9,6) from x^2 and 3x", (a.v, a.r) == (b.v, b.r) == (F(9), F(6)))
 
     from mechanism.traveler import time_to, until_theta
     bad += not check("arrivals 50,150,450", (time_to(0), time_to(2), time_to(8)) == (50, 150, 450))

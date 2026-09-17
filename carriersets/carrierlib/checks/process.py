@@ -257,22 +257,22 @@ def _():
     s = "ATGCATGC"
     c = "".join(comp[b] for b in s)
     back = "".join(comp[b] for b in c)
-    return back == s, "FORCED", f"{s} -> {c} -> {back}"
+    return back == s, "STIPULATED", f"{s} -> {c} -> {back}"
 
 
 @check("dna_theta_base")
 def _():
     V = set("ACGT")
-    return "X" not in V, "FORCED", "X not in {A,C,G,T}"
+    return "X" not in V, "STIPULATED", "X not in {A,C,G,T}"
 
 
 @check("py_plus_refuses_str")
 def _():
     try:
         1 + "a"  # type: ignore
-        return False, "FORCED", "added"
+        return False, "STIPULATED", "added"
     except TypeError:
-        return True, "FORCED", "TypeError"
+        return True, "STIPULATED", "TypeError"
 
 
 @check("rust_move_refuse")
@@ -285,7 +285,7 @@ def _():
         return True
     ok1 = take("x")
     ok2 = take("x")
-    return ok1 and (not ok2), "FORCED", "second take refused"
+    return ok1 and (not ok2), "STIPULATED", "second take refused"
 
 
 @check("java_null_unbox")
@@ -295,9 +295,9 @@ def _():
         if boxed is None:
             raise ValueError("unbox null")
         int(boxed)
-        return False, "FORCED", "unboxed"
+        return False, "STIPULATED", "unboxed"
     except ValueError:
-        return True, "FORCED", "null unbox refused"
+        return True, "STIPULATED", "null unbox refused"
 
 
 @check("econ_budget")
@@ -305,14 +305,14 @@ def _():
     cash, price, qty = 10, 3, 4
     ok_refuse = cash < price * qty
     ok_buy = 10 >= 3 * 3
-    return ok_refuse and ok_buy, "FORCED", "4 units at 3 miss cash 10; 3 units land"
+    return ok_refuse and ok_buy, "STIPULATED", "4 units at 3 miss cash 10; 3 units land"
 
 
 @check("econ_ledger")
 def _():
     # double entry: debit + credit = 0
     books = [("cash", -3), ("inventory", 3)]
-    return sum(v for _, v in books) == 0, "FORCED", "debit/credit closes"
+    return sum(v for _, v in books) == 0, "STIPULATED", "debit/credit closes"
 
 
 @check("goodhart_target")
@@ -323,7 +323,7 @@ def _():
     coupled = m == s
     targeted = [10, 10, 10, 10]  # optimize the metric
     decoupled = targeted != s
-    return coupled and decoupled, "FORCED", "correlation dies once M is the target"
+    return coupled and decoupled, "STIPULATED", "correlation dies once M is the target"
 
 
 @check("hayek_price_cost")
@@ -333,7 +333,7 @@ def _():
     scaffold = 2
     oracle_free = signal  # ghost
     paid = signal + scaffold
-    return paid != oracle_free, "FORCED", f"oracle {oracle_free} vs paid {paid}"
+    return paid != oracle_free, "STIPULATED", f"oracle {oracle_free} vs paid {paid}"
 
 
 @check("lucas_slope_breaks")
@@ -343,7 +343,7 @@ def _():
     def slope(pts):
         return (pts[-1][1] - pts[0][1]) / (pts[-1][0] - pts[0][0])
     new = [(0, 0), (1, 1), (2, 2)]  # agents anticipated
-    return slope(old) != slope(new), "FORCED", f"old {slope(old)} new {slope(new)}"
+    return slope(old) != slope(new), "STIPULATED", f"old {slope(old)} new {slope(new)}"
 
 
 @check("ghost_zero_cost_close")
@@ -353,4 +353,4 @@ def _():
     need = 4
     closed_honest = known >= need
     closed_with_ghost = (known + 1) >= need  # insert zero-cost unit
-    return (not closed_honest) and closed_with_ghost, "FORCED", "closure only after unpaid +1"
+    return (not closed_honest) and closed_with_ghost, "STIPULATED", "closure only after unpaid +1"

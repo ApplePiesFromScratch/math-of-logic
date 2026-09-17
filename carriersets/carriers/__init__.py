@@ -29,12 +29,12 @@ RAW_SECTIONS = [
     ("Physics", physics.CARRIERS),
     ("Probability & Evidence", evidence.CARRIERS),
     ("Measurement Interpretations", interpretations.CARRIERS),
-    ("Generated Atlas", process.CARRIERS),
+    ("Generated Atlas", process.GENERATED),
 ]
 
 LIVE_SECTIONS = [(t, _checked(cs)) for t, cs in RAW_SECTIONS]
 ARCHIVE_SECTIONS = RAW_SECTIONS
 SECTIONS = LIVE_SECTIONS
-ALL_SECTIONS = RAW_SECTIONS
+ALL_SECTIONS = RAW_SECTIONS + [("Hypothesis postcards", process.HYPOTHESIS)]
 ALL = [c for _, cs_ in SECTIONS for c in cs_]
 ARCHIVE = [c for _, cs_ in RAW_SECTIONS for c in cs_]

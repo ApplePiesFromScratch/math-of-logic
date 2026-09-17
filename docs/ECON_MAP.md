@@ -13,4 +13,5 @@ Sequence the monograph names, as operations:
 4. Dogma — forget the cut.
 5. Fight the ghost, miss the compression.
 
-Paid miniatures: carriers 101-104.
+Carriers 95-104 are STIPULATED miniatures. Postcard arithmetic.
+Names (Hayek, DNA, Rust) are labels, not FORCED recoveries.
