@@ -30,8 +30,8 @@ def main():
     try:
         isolate(float("nan"))
         bad += not check("nan float leaves V", False)
-    except LeavesV:
-        bad += not check("nan float leaves V", True)
+    except LeavesV as e:
+        bad += not check("nan float leaves V", "NaN" in str(e))
     print("VACUOUS", "PASSED" if bad == 0 else f"FAILED {bad}")
     return 0 if bad == 0 else 1
 

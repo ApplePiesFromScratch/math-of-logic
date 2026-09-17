@@ -91,6 +91,8 @@ def Q(x) -> F:
     if isinstance(x, int):
         return F(x)
     if isinstance(x, float):
+        if x != x:
+            raise LeavesV("NaN float unlistable")
         raise LeavesV("float unlistable; use Fraction('3') or int")
     if x != x:
         raise LeavesV("NaN-shaped mark is not Q")

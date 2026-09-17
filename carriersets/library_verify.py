@@ -58,7 +58,8 @@ def main():
     total_paid = total_claims = total_checks = 0
     any_fail = []
     print("\n  PROPAGATION LOGIC — CARRIER LIBRARY VERIFICATION")
-    print("  LIVE catalog (executable checks). Archive is --all.")
+    print("  LIVE = generated rows with executable checks.")
+    print("  Museum cites and STIP postcards: --all. Not this headline.")
     print("  P/G->Q is constant; V, G, theta vary; every claim priced.")
 
     for section, carriers in sections:
@@ -148,7 +149,7 @@ def main():
         mp.write_text(json.dumps(chain, indent=1))
 
     print("\n  " + "=" * 68)
-    print(f"  LIBRARY PAID FRACTION: {total_paid}/{total_claims} claims "
+    print(f"  LIVE PAID FRACTION: {total_paid}/{total_claims} executable checks "
           f"machine-decided here = {frac:.1f}%")
     print(f"  the remainder is PRESUMED with citations, STIPULATED "
           f"declarations, or OPEN")
