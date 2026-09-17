@@ -13,7 +13,7 @@ first cut left soft:
 
 - Wall 0: the wrap uses host `+` and `%`
 - Wall 2b: proved-as-BOX does not imply held (generated, 1 world, empty R)
-- Gate refuses a file that claims to ground the integers or to posit zero machinery
+- Gate refuses a file that treats a finite cut as the integers themselves
 
 ---
 
@@ -43,6 +43,7 @@ It does not escape stipulation.
 | 1b intruder | yes | extra chain survives the first axioms |
 | 2b soundness | yes | BOX p holds, p false, empty R |
 | 3 wrap unpriced | yes | establishing the wrap is not priced from inside |
+| 4 free A=A | yes | (9,6) merges x^2 and 3x; next slot 2 vs 0 |
 
 Godel-inside-PA is still a citation. It is not a row in this gate.
 Wall 2b is the paid miniature.
@@ -58,5 +59,5 @@ is a reification.
 Peano Nat is another listed cut. The intruder shows the axioms
 without induction do not name "the" naturals.
 
-Neither route grounds arithmetic. The gate fails the build if a
-file says they do.
+Neither route needs a floor under the wrap. Paid, unpaid, cited.
+A green gate prices coverage. It does not install a metaphysics.

@@ -1,4 +1,4 @@
-"""Claim ledger. Tier is computed. Grounding talk fails the gate."""
+"""Claim ledger. Tier is computed. No metaphysics slot."""
 from __future__ import annotations
 
 

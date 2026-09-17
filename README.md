@@ -29,6 +29,8 @@ python origin/tests/run.py
 PYTHONPATH=modal python -m modal.verify
 PYTHONPATH=modal python -m modal.epistemic
 PYTHONPATH=. python -m studio.steps
+PYTHONPATH=. python -m studio.eq
+PYTHONPATH=. python -m studio.proofcut
 python carriersets/tools/atlas.py
 python carriersets/library_verify.py
 PYTHONPATH=process-calc python -m pcalc.lessons
@@ -89,5 +91,10 @@ update. A pole is theta. A second derivative is another slot.
 4. Label changes no knob -> comment.
 5. Work happened -> ledger line.
 6. Citation without a replica -> priced at zero.
+7. A=A is a weigh on listed dimensions. Free A=A is a ledger miss.
+8. = as equivalence already drew the loops. T was in the kit.
 
-Replica, receipt, ledger line — or it did not happen.
+Replica, receipt, ledger line. Or it did not happen.
+
+There is no grounding slot. Paid, unpaid, cited.
+= is a scale. Maintaining the distinction is work.

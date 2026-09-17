@@ -49,4 +49,8 @@ gate refuses to promote.
 - Grow V before identity.
 - Two honest fixes only.
 - Paid fraction is the honesty meter.
-- A green gate does not ground arithmetic.
+- A green gate prices coverage. There is no grounding slot.
+- A=A is a weigh. = is a scale. Equivalence-kit already contains T.
+- Free val-eq on (9,6) merges x^2 and 3x. Next slot is 2 vs 0.
+- 5=5 as tokens; 5 at tick 3 reads 1. Drift kills A=A vs the record.
+- Mint-priced = on the collision cut is two loops. Drop A=A, R empty.

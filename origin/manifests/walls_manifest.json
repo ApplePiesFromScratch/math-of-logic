@@ -44,11 +44,21 @@
       "scope": 1,
       "text": "WALL 0 HOST METAL. co_propagate is (a+b)%n. The mechanism route reads a wrap. It does not birth + in a host that lacks +",
       "tier": "FORCED-on-cut"
+    },
+    {
+      "cut": "collision (9,6)",
+      "falsifier": "exhibit a priced = on (val, mint) that still merges these two pairs",
+      "held": true,
+      "n": 1,
+      "scope": 1,
+      "text": "WALL 4 FREE A=A. Value-eq merges x^2 and 3x at (9,6). Next slots are 2 and 0. Substitution along free = writes 2=0. A=A is a weigh on listed dimensions, not a prior",
+      "tier": "FORCED-on-cut"
     }
   ],
   "notes": [
     "NOT claimed: Wall 2-Godel is proved here. That line is a citation.",
-    "NOT claimed: walls are defects. They are the specification."
+    "NOT claimed: walls are defects. They are the specification.",
+    "NOT claimed: identity is false. Free A=A is an unpaid G."
   ],
   "title": "WALLS \u2014 both routes stop here",
   "verdict": "FORCED-on-cut"

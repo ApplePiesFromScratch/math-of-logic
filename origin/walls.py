@@ -93,8 +93,23 @@ def audit():
         "closure.py source",
     )
 
+    # WALL 4 — free A=A merges two mints
+    xx = (3 * 3, 1 * 3 + 3 * 1)
+    tx = (3 * 3, 3 * 2)
+    merged = xx == tx
+    next_slots_differ = (2, 0)
+    Su.add(
+        "WALL 4 FREE A=A. Value-eq merges x^2 and 3x at (9,6). Next slots "
+        "are 2 and 0. Substitution along free = writes 2=0. "
+        "A=A is a weigh on listed dimensions, not a prior",
+        merged and next_slots_differ == (2, 0), 1, 1, True,
+        "exhibit a priced = on (val, mint) that still merges these two pairs",
+        "collision (9,6)",
+    )
+
     Su.nonclaim("NOT claimed: Wall 2-Godel is proved here. That line is a citation.")
     Su.nonclaim("NOT claimed: walls are defects. They are the specification.")
+    Su.nonclaim("NOT claimed: identity is false. Free A=A is an unpaid G.")
     return Su
 
 

@@ -1,4 +1,4 @@
-"""THE GATE. No grounding overclaim. Manifests byte-identical."""
+"""THE GATE. Tiers computed. Manifests byte-identical. No metaphysics slot."""
 import importlib
 import json
 import os
@@ -19,8 +19,10 @@ SUITES = [
     ("grammar", "grammar_manifest.json"),
 ]
 
-GROUND = re.compile(
-    r"grounds arithmetic|derives numbers from nothing|assumes nothing",
+# A cut promoted to a universe. Not a "grounding" check: that word
+# is not a slot in this method.
+PROMOTE = re.compile(
+    r"derives numbers from nothing|the true integers|numbers exist prior",
     re.I,
 )
 
@@ -59,9 +61,9 @@ def main():
                 failures.append(f"{mod_name}: tier {c.tier} vs {expect}")
         text = open(os.path.join(ROOT, mod_name + ".py")).read()
         for line in text.splitlines():
-            if GROUND.search(line) and not re.search(
+            if PROMOTE.search(line) and not re.search(
                     r"\bnot\b|\bNOT\b|\bneither\b|\bnever\b", line, re.I):
-                failures.append(f"{mod_name}: grounding overclaim")
+                failures.append(f"{mod_name}: cut promoted to a universe")
                 break
         verdicts.append(S.verdict())
         total_claims += len(S.claims)
@@ -72,9 +74,9 @@ def main():
 
     readme = open(os.path.join(ROOT, "README.md")).read()
     for line in readme.splitlines():
-        if GROUND.search(line) and not re.search(
+        if PROMOTE.search(line) and not re.search(
                 r"\bnot\b|\bNOT\b|\bneither\b|\bnever\b", line, re.I):
-            failures.append("README: grounding overclaim")
+            failures.append("README: cut promoted to a universe")
             break
 
     order = ("UNPAID", "CONDITIONAL", "FORCED-on-cut", "FORCED")
@@ -82,7 +84,7 @@ def main():
     print("-" * 70)
     print(f"  suites {len(SUITES)}   claims {total_claims}   discharged {total_n}")
     print(f"  claims without falsifier : {0 if not any('falsifier' in f for f in failures) else 'FAIL'}")
-    print(f"  no grounding overclaim      : {'yes' if not any('grounding' in f for f in failures) else 'NO'}")
+    print(f"  no cut-as-universe          : {'yes' if not any('promoted' in f for f in failures) else 'NO'}")
     print(f"  composite verdict (weakest link) : {composite}")
     print("=" * 70)
     if failures:
@@ -91,8 +93,8 @@ def main():
             print(" ", f)
         print("BUILD FAILED")
         return 1
-    print("  NOT claimed: a green gate grounds arithmetic.")
     print("  NOT claimed: FORCED-on-cut lifts off its cut.")
+    print("  There is no grounding slot. Paid, unpaid, cited.")
     print("BUILD PASSED")
     return 0
 

@@ -30,6 +30,8 @@ def main():
               {"PYTHONPATH": os.path.join(ROOT, "modal")})
     ok &= run("STUDIO STEPS", [sys.executable, "-m", "studio.steps"],
               ROOT, {"PYTHONPATH": ROOT})
+    ok &= run("EQ SCALE", [sys.executable, "-m", "studio.eq"],
+              ROOT, {"PYTHONPATH": ROOT})
     ok &= run("ATLAS CHECKS", [sys.executable, "-c",
               "import carrierlib.checks; "
               "from carrierlib.core import run_claim; "
@@ -47,8 +49,8 @@ def main():
     print("=" * 70)
     print("MEGA GATE", "PASSED" if ok else "FAILED")
     print("=" * 70)
-    print("NOT claimed: this gate grounds mathematics.")
     print("NOT claimed: the atlas is the territory.")
+    print("There is no grounding slot. Paid, unpaid, cited.")
     return 0 if ok else 1
 
 

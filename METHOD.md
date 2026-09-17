@@ -23,6 +23,10 @@ It is division only when G is a rate channel.
 4. Score on a listed grid: FORCED-on-cut / EMPIRICAL / DEFER / REFUSE.
 5. Grow V before calling two presentations the same G.
 6. If a label changes no knob, it is a comment.
+7. = is a scale. A=A is a weigh on listed dimensions (token, wrap,
+   mint, leftover, time). Free A=A is the cupboard move.
+8. = as "equivalence relation" already contains A=A as T on its
+   own frame. That loop is stipulated, not discovered.
 
 ## Two honest fixes
 
@@ -43,6 +47,11 @@ is that shape in harder notation.
 
 Citation is a call to trust. Generate when you can.
 
+There is no grounding slot. A wrap that closes is paid on that wrap.
+A schema lift is unpaid until it runs. A paper is priced at zero
+until it has a replica here. "Grounding" is a leftover word.
+The meter already does the job.
+
 ## Nouns
 
 Labels. Compression. Not containers.
@@ -51,4 +60,21 @@ Labels. Compression. Not containers.
 
 A wrap is not a number existing. A world is not a place.
 S5 is not knowledge. A pair (v,r) is not a function.
+Free A=A is not a law. It is a zero-cost G.
 The atlas is a map of maps.
+
+## Equality
+
+= started as equivalent-in-weight. Two pans, a tick, a ledger.
+
+token-eq   same string
+wrap-eq    same Closure(n) / same tick
+mint-eq    same G that produced the mark
+slot-eq    same leftover / jet / formula set
+time-eq    same drift as the recorded weigh
+
+Free = merges those and prices the merge at zero. Substitution
+walks that frame and writes 2=0 at the (9,6) collision.
+
+If the only arrows you have are loops, say so. Drop reflexivity
+and mint-eq on that cut is empty. The "relation" was the unpaid loop.
