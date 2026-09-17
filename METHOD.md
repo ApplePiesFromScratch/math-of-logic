@@ -63,6 +63,13 @@ S5 is not knowledge. A pair (v,r) is not a function.
 Free A=A is not a law. It is a zero-cost G.
 The atlas is a map of maps.
 
+## Seed mechanism
+
+A traveler (x, L, eta) on support C. V is reachable (x,L).
+G is step / drag / vent / min-plus. theta fires the split.
+Two seeds at (0,0) with different eta are not one mark.
+`mechanism/` is that. useful_pattern.py is the first long go.
+
 ## Equality
 
 = started as equivalent-in-weight. Two pans, a tick, a ledger.

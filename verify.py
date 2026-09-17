@@ -32,6 +32,10 @@ def main():
               ROOT, {"PYTHONPATH": ROOT})
     ok &= run("EQ SCALE", [sys.executable, "-m", "studio.eq"],
               ROOT, {"PYTHONPATH": ROOT})
+    ok &= run("MECHANISM", [sys.executable, "-m", "mechanism.verify"],
+              ROOT, {"PYTHONPATH": ROOT})
+    ok &= run("LOGIC CENSUS", [sys.executable, "-m", "studio.logic"],
+              ROOT, {"PYTHONPATH": ROOT})
     ok &= run("ATLAS CHECKS", [sys.executable, "-c",
               "import carrierlib.checks; "
               "from carrierlib.core import run_claim; "

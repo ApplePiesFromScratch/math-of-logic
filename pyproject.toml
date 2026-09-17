@@ -1,0 +1,10 @@
+[project]
+name = "mathoflogic"
+version = "0.3.0"
+description = "Cut-and-ledger maps. isolate / rate / certify."
+requires-python = ">=3.10"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.setuptools.packages.find]
+include = ["pl*", "mechanism*", "studio*"]

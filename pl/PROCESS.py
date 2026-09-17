@@ -90,6 +90,8 @@ def Q(x) -> F:
         raise LeavesV("bool is not Q")
     if isinstance(x, int):
         return F(x)
+    if isinstance(x, float):
+        raise LeavesV("float unlistable; use Fraction('3') or int")
     raise LeavesV(f"not in Q: {type(x).__name__}")
 
 
