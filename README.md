@@ -80,6 +80,7 @@ From this directory:
 PYTHONPATH=. python3 -c "from pl import isolate, rate; x=isolate(3); print(rate(x*x, x))"
 PYTHONPATH=. python3 tests/skeptic.py
 PYTHONPATH=. python3 tests/vacuous.py
+PYTHONPATH=. python3 -m studio.substance
 python3 verify.py
 ```
 
