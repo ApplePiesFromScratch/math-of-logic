@@ -1,86 +1,93 @@
-# Propagation Logic v0.3
+# mathoflogic
 
-`P / G → Q`
-
-One operator. Three knobs. Presentations, not terrain.
-
-This is a **rebuild** of [ApplePiesFromScratch/propagation-logic](https://github.com/ApplePiesFromScratch/propagation-logic).
-The old tree treated the operator as a mathesis that *was* logic and calculus.
-This tree keeps the operator and drops that claim.
+One method. Several maps. A gate that prices them.
 
 ```
-V   alphabet
-G   declared maps / isolation
-θ   admission, refusal, budget
+V     listed values
+G     listed maps
+theta listed refusal / budget
 ```
 
-A name introduces structure. It does not uncover essence.
-Nouns compress. The noun does not get to run.
-
-## Quick start
-
-```bash
-python PROCESS.py          # kernel + ledger + μ + map   (one file)
-python -m pl               # demo
-python -m pl cert          # JSON certificate
-python -m pl migrate       # v0.3 reconfig ledger
-python -m pytest -q
+```
+python verify.py
 ```
 
-```python
-from pl import isolate, rate, certify, Runtime, V2, V3
+Stdlib. No install. Nouns are labels.
 
-x = isolate(3)
-rate(x * x, x)                         # 6
-c = certify(lambda z: z ** 3 + 2 * z, at=3)
-# 29, FORCED-on-cut, falsifier attached
+This folder is the combined tree from origin, modal, process-calc,
+carriersets (with Generated Atlas), studio steps, and the PL kernel.
 
-rt = Runtime(V2, 1)
-rt.reconfigure(V3, "admit midpoint")   # pays RECONFIG + GUARD + μ
-```
+It is a map of maps. It is not a floor.
 
-## What changed from the old repo
+---
 
-| old | v0.3 |
-|---|---|
-| `Γ` / Gamma | `G` |
-| “structural identity with nature” | map; non-claims listed |
-| laws authored `forced: true` | tier computed on a declared cut |
-| isolate / guards implicit free | isolate unpriced; guards and μ on the ledger |
-| V grows by adding `∞` or a point | leave-V → θ or registered μ |
-| paradoxes as thermodynamic debt | load is stipulated, not derived |
-| Mathesis that runs | replica, receipt, ledger line |
-
-Details: `docs/CHANGELOG_FROM_V1.md`. Guardrails: `docs/GUARDRAILS.md`.
-
-## Layout
+## Run
 
 ```
-PROCESS.py          standalone resume file
-pl/                 kernel: reading, certify, migrate, prescreen
-carriers/           JSON presentations (CL2, L3, K3, PROC)
-docs/               guardrails, v0.3 spec, operator guide
-insights.json       mapped receipts
-tests/
+python verify.py                 # origin + modal + steps + atlas checks
+python origin/tests/run.py
+PYTHONPATH=modal python -m modal.verify
+PYTHONPATH=modal python -m modal.epistemic
+PYTHONPATH=. python -m studio.steps
+python carriersets/tools/atlas.py
+python carriersets/library_verify.py
+PYTHONPATH=process-calc python -m pcalc.lessons
+python pl/PROCESS.py
 ```
 
-Carrier JSON must name `V`, `G`, `theta`, `forced_on_cut`, `fails`, `falsifier`.
-Schema: `carriers/_schema.json`. `Gamma` is retired.
+---
 
-## Guardrails (admission)
+## Tree
 
-1. No `V,G,θ` in the sentence → not a claim.
-2. Two presentations agree → grow `V` before one G.
-3. Step leaves `V` → θ or registered μ.
-4. Label changes no knob → comment.
-5. Work happened → ledger line.
+```
+METHOD.md           the loop
+INSIGHTS.md         rows that compile
+verify.py           top gate
+origin/             two routes to arithmetic, five walls
+modal/              frames generated n<=3, deontic, epistemic replica
+process-calc/       six-move course, labs, bridge sheet
+carriersets/        89 carriers, ATLAS.md generator
+studio/             algebra, logic, calc, steps tape
+pl/PROCESS.py       kernel + ledger + migration
+docs/               audits, workbook issues, site notes
+```
 
-## Status
+---
 
-Runnable kernel. Certificates. Migration maps. Unified ledger.
-Not a replacement for JAX, PhysX, or vanilla Doom.
-Not how variation or the sky *are*.
+## What the gate already paid
 
-## License
+- Origin: 23 claims, wrap laws, 81-pair route agreement, intruder,
+  Wall 0 (host +), Wall 2b (BOX p, p false). Composite CONDITIONAL.
+- Modal: 12 generated force/break rows. 530 frames. S5 split.
+  C(p) never on the k=4 attack replica.
+- Process pairs: rate 6 on five seeds. 5 ops to 6 vs 5 ops to 6+h.
+- Atlas section 86-89: 13 FORCED checks.
+- Carriersets inherited library: 85 carriers, paid fraction live
+  when you run library_verify.py.
 
-MIT (same terms as the upstream repo).
+585 frames was a leftover string. This tree uses 530.
+
+---
+
+## Pedagogy, one page
+
+rate(x*x, x) at 3 is 6 in five arithmetic operations on Q.
+The school path uses five operations and lands on 6+h.
+Deleting h is not an operation this V holds.
+That unpaid step is "approach but never reach."
+
+Isolation is an argument. Mix is Leibniz because both channels
+update. A pole is theta. A second derivative is another slot.
+
+---
+
+## Guardrails
+
+1. No V, G, theta -> not a claim.
+2. Two presentations agree -> grow V before one G.
+3. Leave V -> theta or registered mu.
+4. Label changes no knob -> comment.
+5. Work happened -> ledger line.
+6. Citation without a replica -> priced at zero.
+
+Replica, receipt, ledger line — or it did not happen.
