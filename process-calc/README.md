@@ -47,6 +47,13 @@ python -m pcalc.intlab
 python -m pcalc.ratelab
 python -m pcalc.fdlab
 python -m pcalc.gen
+python -m pcalc.translab
+python -m pcalc.veclab
+python -m pcalc.scope
+python -m pcalc.algscope
+python -m pcalc.statscope
+python -m pcalc.topgeoscope
+python -m pcalc.domains
 ```
 
 What would make this land: `docs/GAMECHANGER.md`

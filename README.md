@@ -72,6 +72,37 @@ the same loop.
 
 ---
 
+## First course (six moves)
+
+Side-by-side with Calc I lives here:
+
+```
+PYTHONPATH=process-calc:. python3 -m pcalc.lessons
+PYTHONPATH=. python3 -m studio.steps
+```
+
+`lessons` prints the six moves: reading, rate, Leibniz mix, chain,
+pole as theta, stop before a second slot.
+
+`studio.steps` prints the tape: pair path 5 ops to 6; school path
+5 ops to 6+h; deleting h is not + * / on Q.
+
+Teacher notes, problem book, bridge sheet so they still sit the
+other exam:
+
+```
+process-calc/docs/TEACHER.md
+process-calc/docs/PROBLEMS.md
+process-calc/docs/BRIDGE.md
+process-calc/README.md
+```
+
+Labs: rate, units, fd, FTC, jet, history, **trans**, **vec**.
+Same polynomial numbers as Calc I. Trig/exp/log: init + jet in Q,
+leftover named. Vector: several isolators.
+
+---
+
 ## Test with the repo
 
 From this directory:
@@ -80,7 +111,6 @@ From this directory:
 PYTHONPATH=. python3 -c "from pl import isolate, rate; x=isolate(3); print(rate(x*x, x))"
 PYTHONPATH=. python3 tests/skeptic.py
 PYTHONPATH=. python3 tests/vacuous.py
-PYTHONPATH=. python3 -m studio.substance
 python3 verify.py
 ```
 
@@ -111,7 +141,8 @@ mechanism/        traveler seed. V G theta fall out if A=A is refused
 origin/           two routes to a wrap. walls. composite CONDITIONAL
 modal/            frames generated n<=3 (530). correspondence is a filter
 process-calc/     labs. same Reading as PROCESS
-studio/           steps, eq scale, proofcut, logic census, operators, root bug of logic and math.
+studio/           steps, eq scale, substance-bug map, logic census, operators
+docs/             ECON_MAP, PHYSARUM, SUBSTANCE_BUG (stipulated readings)
 carriersets/      catalog + recover + library_verify
 tests/            skeptic (headline numbers) and vacuous (empty-all)
 docs/             maps, including ECON_MAP.md

@@ -11,8 +11,8 @@ sin lives in V=Q.
 | power / product / quotient / chain | mix + quot + cancellation | yes |
 | implicit / related / parametric | isolation policy | yes |
 | inverse functions | isolate the output | yes |
-| trig | needs a V that holds the circle map | **no** — other V |
-| exp / log | needs a V with a fixed point of rate=value | **no** — other V |
+| trig | init readings + jet leftover; rate(sin)=cos.v | lab `translab` |
+| exp / log | init + jet leftover; rate(exp)=exp.v; log θ at 0 | lab `translab` |
 | optimization | rate(f,x)=0 (output channel dead wrt x) | yes, as θ-on-rate |
 | L'Hôpital | reconstructs a 0/0 *value* from live channels | yes as a warning: use rate, don't hire Inf |
 | Riemann integral | listed partition extract | lab |
@@ -20,10 +20,12 @@ sin lives in V=Q.
 | series | Lagrange jet / other V | jet lab is the start |
 | polar / parametric | isolation | rate lab |
 | multivariable | several isolators | same G, more names |
-| vector calc | grade / forms (Cartan packing) | not this repo |
+| vector calc | several isolators; grad/div/curl as rates | lab `veclab` |
 | DE | constraint on channels | related-rates style |
 | ε-δ proofs | unlistable V | DEFER |
 | numerical fd | leftover identity | fd lab |
+
+Full register: `docs/SCOPE.md` and `python -m pcalc.scope` (21 branches).
 
 Grow V in public when you want sin. Do not pretend the pair did it.
 
