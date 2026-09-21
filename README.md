@@ -1,5 +1,24 @@
 # mathoflogic
 
+Standalone swap tree. 2026-09-21 cut. Includes `pl/PROCESS.py` and the `opengine/` atlas (journal, plang, slots, listed field, AI/OS/GEMM maps).
+
+```
+python3 verify.py
+```
+
+Kernel only:
+
+```
+python3 pl/PROCESS.py
+python3 -c "from pl import isolate, rate; print(rate(isolate(3)*isolate(3), isolate(3)))"
+```
+
+Atlas gate only:
+
+```
+python3 opengine/verify_all.py
+```
+
 A cut-and-ledger tool for formal systems.
 
 You list three knobs:

@@ -52,11 +52,12 @@ def main():
               "raise SystemExit(bad)"],
               os.path.join(ROOT, "carriersets"),
               {"PYTHONPATH": os.path.join(ROOT, "carriersets")})
+    ok &= run("OPENGINE ATLAS", [sys.executable, "verify_all.py"],
+              os.path.join(ROOT, "opengine"))
     print("=" * 70)
     print("MEGA GATE", "PASSED" if ok else "FAILED")
     print("=" * 70)
-    print("NOT claimed: the atlas is the territory.")
-    print("There is no grounding slot. Paid, unpaid, cited.")
+    print("Paid, unpaid, cited. Maps are not terrain.")
     return 0 if ok else 1
 
 
