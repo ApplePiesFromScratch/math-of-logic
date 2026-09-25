@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>3-body listed ticks</title>
+<style>
+  html,body{margin:0;height:100%;background:#111;color:#ddd;font:14px/1.4 ui-monospace,monospace}
+  #hud{position:fixed;left:12px;top:12px;z-index:2;background:#111c;padding:10px 12px;border:1px solid #333;max-width:28rem}
+  #hud b{color:#8fd4a8}
+  canvas{display:block;width:100%;height:100%}
+  .theta{color:#e76f51}
+</style>
+</head>
+<body>
+<div id="hud">
+  <b>3-body</b> Euler tick. No closed form claimed.<br/>
+  tick <span id="t">0</span>
+  leftover Δ(T−U) <span id="dE">0</span><br/>
+  <span id="msg">drag to look. two seeds: solid vs dashed hint in HUD</span>
+</div>
+<canvas id="c"></canvas>
+<script>
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+let W, H, rotY = 0.4, rotX = 0.35, dragging = false, lx, ly;
+function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
+addEventListener("resize", resize); resize();
+canvas.addEventListener("mousedown", e => { dragging = true; lx = e.clientX; ly = e.clientY; });
+addEventListener("mouseup", () => dragging = false);
+addEventListener("mousemove", e => {
+  if (!dragging) return;
+  rotY += (e.clientX - lx) * 0.008;
+  rotX += (e.clientY - ly) * 0.008;
+  lx = e.clientX; ly = e.clientY;
+});
+
+function pull(a, b, ma, mb) {
+  const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
+  const g2 = dx*dx + dy*dy + dz*dz;
+  if (g2 < 1e-8) throw "theta collision";
+  const mag = ma * mb / g2;
+  const g = Math.sqrt(g2);
+  return { x: mag * dx / g, y: mag * dy / g, z: mag * dz / g };
+}
+
+function cloneBodies(B) {
+  return B.map(p => ({ x:p.x,y:p.y,z:p.z, vx:p.vx,vy:p.vy,vz:p.vz, m:p.m, col:p.col }));
+}
+
+function energy(B) {
+  let T = 0, U = 0;
+  for (const p of B) T += p.m * (p.vx*p.vx + p.vy*p.vy + p.vz*p.vz);
+  for (let i=0;i<B.length;i++) for (let j=i+1;j<B.length;j++) {
+    const dx=B[j].x-B[i].x, dy=B[j].y-B[i].y, dz=B[j].z-B[i].z;
+    const g = Math.sqrt(dx*dx+dy*dy+dz*dz);
+    if (g < 1e-8) throw "theta collision";
+    U += B[i].m * B[j].m / g;
+  }
+  return { T, U, d: T - U };
+}
+
+function step(B, dt) {
+  const acc = B.map(() => ({x:0,y:0,z:0}));
+  for (let i=0;i<B.length;i++) for (let j=0;j<B.length;j++) if (i!==j) {
+    const f = pull(B[i], B[j], B[i].m, B[j].m);
+    acc[i].x += f.x; acc[i].y += f.y; acc[i].z += f.z;
+  }
+  for (let i=0;i<B.length;i++) {
+    B[i].vx += acc[i].x * dt; B[i].vy += acc[i].y * dt; B[i].vz += acc[i].z * dt;
+    B[i].x += B[i].vx * dt; B[i].y += B[i].vy * dt; B[i].z += B[i].vz * dt;
+  }
+}
+
+const A0 = [
+  { x:-4, y:0, z:0, vx:0, vy:0.18, vz:0.05, m:1, col:"#2a9d8f" },
+  { x: 4, y:0, z:0, vx:0, vy:-0.16, vz:-0.04, m:1, col:"#e9c46a" },
+  { x: 0, y:3.5, z:1.2, vx:0.12, vy:0, vz:-0.08, m:1, col:"#e76f51" },
+];
+const B0 = cloneBodies(A0);
+B0[2].x += 0.4; // second seed
+let A = cloneBodies(A0), B = cloneBodies(B0);
+let e0A = energy(A), e0B = energy(B);
+let tick = 0, trailsA = [[],[],[]], trailsB = [[],[],[]], dead = false;
+
+function project(p) {
+  const cy = Math.cos(rotY), sy = Math.sin(rotY);
+  const cx = Math.cos(rotX), sx = Math.sin(rotX);
+  let x = p.x * cy - p.z * sy;
+  let z = p.x * sy + p.z * cy;
+  let y = p.y * cx - z * sx;
+  z = p.y * sx + z * cx;
+  const sc = 42;
+  return { X: W/2 + x * sc, Y: H/2 + y * sc, z };
+}
+
+function drawTrail(trails, alpha) {
+  for (let i=0;i<3;i++) {
+    ctx.beginPath();
+    ctx.strokeStyle = A0[i].col;
+    ctx.globalAlpha = alpha;
+    trails[i].forEach((p,k) => {
+      const q = project(p);
+      if (k===0) ctx.moveTo(q.X,q.Y); else ctx.lineTo(q.X,q.Y);
+    });
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function loop() {
+  if (!dead) {
+    try {
+      step(A, 0.04); step(B, 0.04); tick++;
+      for (let i=0;i<3;i++) {
+        trailsA[i].push({x:A[i].x,y:A[i].y,z:A[i].z});
+        trailsB[i].push({x:B[i].x,y:B[i].y,z:B[i].z});
+        if (trailsA[i].length > 400) trailsA[i].shift();
+        if (trailsB[i].length > 400) trailsB[i].shift();
+      }
+    } catch (e) {
+      dead = true;
+      document.getElementById("msg").innerHTML = '<span class="theta">'+e+'</span>';
+    }
+  }
+  ctx.fillStyle = "#111"; ctx.fillRect(0,0,W,H);
+  // axes
+  ctx.strokeStyle = "#222";
+  [[-8,0,0],[8,0,0],[0,-8,0],[0,8,0],[0,0,-8],[0,0,8]].forEach((p,i,arr) => {
+    if (i%2===0) {
+      const a = project({x:arr[i][0],y:arr[i][1],z:arr[i][2]});
+      const b = project({x:arr[i+1][0],y:arr[i+1][1],z:arr[i+1][2]});
+      ctx.beginPath(); ctx.moveTo(a.X,a.Y); ctx.lineTo(b.X,b.Y); ctx.stroke();
+    }
+  });
+  drawTrail(trailsB, 0.25);
+  drawTrail(trailsA, 0.85);
+  function dots(bodies) {
+    bodies.forEach(p => {
+      const q = project(p);
+      const r = 6 + q.z * 0.15;
+      ctx.beginPath(); ctx.fillStyle = p.col;
+      ctx.arc(q.X, q.Y, Math.max(3, r), 0, 6.28); ctx.fill();
+    });
+  }
+  dots(B); dots(A);
+  if (!dead) {
+    const e = energy(A);
+    document.getElementById("t").textContent = tick;
+    document.getElementById("dE").textContent = (e.d - e0A.d).toFixed(5);
+  }
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
