@@ -5,7 +5,7 @@
 <title>3-body listed ticks</title>
 <style>
   html,body{margin:0;height:100%;background:#111;color:#ddd;font:14px/1.4 ui-monospace,monospace}
-  #hud{position:fixed;left:12px;top:12px;z-index:2;background:#111c;padding:10px 12px;border:1px solid #333;max-width:28rem}
+  #hud{position:fixed;left:12px;top:12px;z-index:2;background:#111c;padding:10px 12px;border:1px solid #333;max-width:30rem}
   #hud b{color:#8fd4a8}
   canvas{display:block;width:100%;height:100%}
   .theta{color:#e76f51}
@@ -13,16 +13,17 @@
 </head>
 <body>
 <div id="hud">
-  <b>3-body</b> Euler tick. No closed form claimed.<br/>
+  <b>3-body</b> figure-8-shaped seed. Euler. Camera on COM.<br/>
   tick <span id="t">0</span>
-  leftover Δ(T−U) <span id="dE">0</span><br/>
-  <span id="msg">drag to look. two seeds: solid vs dashed hint in HUD</span>
+  leftover Δ(T−U) <span id="dE">0</span>
+  span <span id="sp">0</span><br/>
+  <span id="msg">drag to look. faint trail = nudged third body</span>
 </div>
 <canvas id="c"></canvas>
 <script>
 const canvas = document.getElementById("c");
 const ctx = canvas.getContext("2d");
-let W, H, rotY = 0.4, rotX = 0.35, dragging = false, lx, ly;
+let W, H, rotY = 0.55, rotX = 0.5, dragging = false, lx, ly;
 function resize(){ W = canvas.width = innerWidth; H = canvas.height = innerHeight; }
 addEventListener("resize", resize); resize();
 canvas.addEventListener("mousedown", e => { dragging = true; lx = e.clientX; ly = e.clientY; });
@@ -34,36 +35,38 @@ addEventListener("mousemove", e => {
   lx = e.clientX; ly = e.clientY;
 });
 
+const G = 1;
 function pull(a, b, ma, mb) {
   const dx = b.x - a.x, dy = b.y - a.y, dz = b.z - a.z;
   const g2 = dx*dx + dy*dy + dz*dz;
-  if (g2 < 1e-8) throw "theta collision";
-  const mag = ma * mb / g2;
-  const g = Math.sqrt(g2);
-  return { x: mag * dx / g, y: mag * dy / g, z: mag * dz / g };
+  if (g2 < 1e-6) throw "theta collision";
+  const inv = G * ma * mb / (g2 * Math.sqrt(g2));
+  return { x: inv * dx, y: inv * dy, z: inv * dz };
 }
-
 function cloneBodies(B) {
   return B.map(p => ({ x:p.x,y:p.y,z:p.z, vx:p.vx,vy:p.vy,vz:p.vz, m:p.m, col:p.col }));
 }
-
 function energy(B) {
   let T = 0, U = 0;
-  for (const p of B) T += p.m * (p.vx*p.vx + p.vy*p.vy + p.vz*p.vz);
+  for (const p of B) T += 0.5 * p.m * (p.vx*p.vx + p.vy*p.vy + p.vz*p.vz);
   for (let i=0;i<B.length;i++) for (let j=i+1;j<B.length;j++) {
     const dx=B[j].x-B[i].x, dy=B[j].y-B[i].y, dz=B[j].z-B[i].z;
     const g = Math.sqrt(dx*dx+dy*dy+dz*dz);
-    if (g < 1e-8) throw "theta collision";
-    U += B[i].m * B[j].m / g;
+    if (g < 1e-6) throw "theta collision";
+    U += -G * B[i].m * B[j].m / g;
   }
-  return { T, U, d: T - U };
+  return { T, U, d: T + U };
 }
-
+function com(B) {
+  let x=0,y=0,z=0,m=0;
+  for (const p of B) { x+=p.m*p.x; y+=p.m*p.y; z+=p.m*p.z; m+=p.m; }
+  return { x:x/m, y:y/m, z:z/m };
+}
 function step(B, dt) {
   const acc = B.map(() => ({x:0,y:0,z:0}));
   for (let i=0;i<B.length;i++) for (let j=0;j<B.length;j++) if (i!==j) {
     const f = pull(B[i], B[j], B[i].m, B[j].m);
-    acc[i].x += f.x; acc[i].y += f.y; acc[i].z += f.z;
+    acc[i].x += f.x / B[i].m; acc[i].y += f.y / B[i].m; acc[i].z += f.z / B[i].m;
   }
   for (let i=0;i<B.length;i++) {
     B[i].vx += acc[i].x * dt; B[i].vy += acc[i].y * dt; B[i].vz += acc[i].z * dt;
@@ -71,35 +74,47 @@ function step(B, dt) {
   }
 }
 
+// Moore figure-8 (planar) plus a tiny z so the 3D camera has something to show
+const x1=0.97000436, y1=-0.24308753;
+const v3x=-0.93240737, v3y=-0.86473146;
 const A0 = [
-  { x:-4, y:0, z:0, vx:0, vy:0.18, vz:0.05, m:1, col:"#2a9d8f" },
-  { x: 4, y:0, z:0, vx:0, vy:-0.16, vz:-0.04, m:1, col:"#e9c46a" },
-  { x: 0, y:3.5, z:1.2, vx:0.12, vy:0, vz:-0.08, m:1, col:"#e76f51" },
+  { x: x1,  y: y1,  z: 0.04, vx: -v3x/2, vy: -v3y/2, vz: 0.02, m:1, col:"#2a9d8f" },
+  { x:-x1,  y:-y1,  z:-0.04, vx: -v3x/2, vy: -v3y/2, vz:-0.02, m:1, col:"#e9c46a" },
+  { x: 0,   y: 0,   z: 0,    vx: v3x,    vy: v3y,    vz: 0,    m:1, col:"#e76f51" },
 ];
 const B0 = cloneBodies(A0);
-B0[2].x += 0.4; // second seed
+B0[2].vx += 0.01;
 let A = cloneBodies(A0), B = cloneBodies(B0);
-let e0A = energy(A), e0B = energy(B);
+let e0A = energy(A);
 let tick = 0, trailsA = [[],[],[]], trailsB = [[],[],[]], dead = false;
 
-function project(p) {
+function project(p, C, sc) {
+  const x0 = p.x - C.x, y0 = p.y - C.y, z0 = p.z - C.z;
   const cy = Math.cos(rotY), sy = Math.sin(rotY);
   const cx = Math.cos(rotX), sx = Math.sin(rotX);
-  let x = p.x * cy - p.z * sy;
-  let z = p.x * sy + p.z * cy;
-  let y = p.y * cx - z * sx;
-  z = p.y * sx + z * cx;
-  const sc = 42;
+  let x = x0 * cy - z0 * sy;
+  let z = x0 * sy + z0 * cy;
+  let y = y0 * cx - z * sx;
+  z = y0 * sx + z * cx;
   return { X: W/2 + x * sc, Y: H/2 + y * sc, z };
 }
 
-function drawTrail(trails, alpha) {
+function spanOf(bodies, C) {
+  let m = 0.2;
+  for (const p of bodies) {
+    const dx=p.x-C.x, dy=p.y-C.y, dz=p.z-C.z;
+    m = Math.max(m, Math.sqrt(dx*dx+dy*dy+dz*dz));
+  }
+  return m;
+}
+
+function drawTrail(trails, C, sc, alpha) {
   for (let i=0;i<3;i++) {
     ctx.beginPath();
     ctx.strokeStyle = A0[i].col;
     ctx.globalAlpha = alpha;
     trails[i].forEach((p,k) => {
-      const q = project(p);
+      const q = project(p, C, sc);
       if (k===0) ctx.moveTo(q.X,q.Y); else ctx.lineTo(q.X,q.Y);
     });
     ctx.stroke();
@@ -110,12 +125,13 @@ function drawTrail(trails, alpha) {
 function loop() {
   if (!dead) {
     try {
-      step(A, 0.04); step(B, 0.04); tick++;
+      for (let k=0;k<4;k++) { step(A, 0.002); step(B, 0.002); }
+      tick++;
       for (let i=0;i<3;i++) {
         trailsA[i].push({x:A[i].x,y:A[i].y,z:A[i].z});
         trailsB[i].push({x:B[i].x,y:B[i].y,z:B[i].z});
-        if (trailsA[i].length > 400) trailsA[i].shift();
-        if (trailsB[i].length > 400) trailsB[i].shift();
+        if (trailsA[i].length > 800) trailsA[i].shift();
+        if (trailsB[i].length > 800) trailsB[i].shift();
       }
     } catch (e) {
       dead = true;
@@ -123,23 +139,25 @@ function loop() {
     }
   }
   ctx.fillStyle = "#111"; ctx.fillRect(0,0,W,H);
-  // axes
+  const C = com(A);
+  const sp = Math.max(spanOf(A, C), spanOf(B, C));
+  const sc = Math.min(W, H) * 0.28 / sp;
   ctx.strokeStyle = "#222";
-  [[-8,0,0],[8,0,0],[0,-8,0],[0,8,0],[0,0,-8],[0,0,8]].forEach((p,i,arr) => {
+  [[-1,0,0],[1,0,0],[0,-1,0],[0,1,0],[0,0,-1],[0,0,1]].forEach((p,i,arr) => {
     if (i%2===0) {
-      const a = project({x:arr[i][0],y:arr[i][1],z:arr[i][2]});
-      const b = project({x:arr[i+1][0],y:arr[i+1][1],z:arr[i+1][2]});
+      const a = project({x:C.x+arr[i][0]*sp,y:C.y+arr[i][1]*sp,z:C.z+arr[i][2]*sp}, C, sc);
+      const b = project({x:C.x+arr[i+1][0]*sp,y:C.y+arr[i+1][1]*sp,z:C.z+arr[i+1][2]*sp}, C, sc);
       ctx.beginPath(); ctx.moveTo(a.X,a.Y); ctx.lineTo(b.X,b.Y); ctx.stroke();
     }
   });
-  drawTrail(trailsB, 0.25);
-  drawTrail(trailsA, 0.85);
+  drawTrail(trailsB, C, sc, 0.22);
+  drawTrail(trailsA, C, sc, 0.9);
   function dots(bodies) {
-    bodies.forEach(p => {
-      const q = project(p);
-      const r = 6 + q.z * 0.15;
+    const order = bodies.map((p,i)=>({p,i,z:project(p,C,sc).z})).sort((a,b)=>a.z-b.z);
+    order.forEach(({p}) => {
+      const q = project(p, C, sc);
       ctx.beginPath(); ctx.fillStyle = p.col;
-      ctx.arc(q.X, q.Y, Math.max(3, r), 0, 6.28); ctx.fill();
+      ctx.arc(q.X, q.Y, 7, 0, 6.28); ctx.fill();
     });
   }
   dots(B); dots(A);
@@ -147,6 +165,7 @@ function loop() {
     const e = energy(A);
     document.getElementById("t").textContent = tick;
     document.getElementById("dE").textContent = (e.d - e0A.d).toFixed(5);
+    document.getElementById("sp").textContent = sp.toFixed(3);
   }
   requestAnimationFrame(loop);
 }
